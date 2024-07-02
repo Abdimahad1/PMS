@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaHome, FaTasks, FaBell, FaProjectDiagram, FaCog, FaUserCircle } from 'react-icons/fa';
+import { FaHome, FaTasks, FaBell, FaProjectDiagram, FaCog, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -14,8 +14,8 @@ const Sidebar = () => {
     ];
 
     return (
-        <div className={`h-screen ${collapsed ? 'w-20' : 'w-64'} bg-blue-900 text-white transition-all duration-300 fixed md:relative`}>
-            <div className="p-4 flex justify-between items-center">
+        <div className={`h-screen flex flex-col ${collapsed ? 'w-20' : 'w-64'} bg-blue-900 text-white transition-all duration-300 fixed md:relative`}>
+            <div className="p-4 flex justify-between items-center border-b border-blue-700">
                 <span className="text-xl font-semibold">{!collapsed && 'Facenote'}</span>
                 <button onClick={() => setCollapsed(!collapsed)} className="focus:outline-none">
                     <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -27,20 +27,31 @@ const Sidebar = () => {
                     </svg>
                 </button>
             </div>
-            <div className="mt-4 flex items-center p-2">
+            <div className="mt-4 flex items-center p-2 border-b border-blue-700">
                 <FaUserCircle className="h-10 w-10 mr-2" />
                 {!collapsed && <div>
                     <p className="text-lg font-semibold">User Name</p>
                     <p className="text-sm">My Account</p>
                 </div>}
             </div>
-            <div className="mt-4">
+            <div className="mt-4 flex-1">
                 {menuItems.map((item, index) => (
-                    <Link to={item.route} key={index} className="flex items-center p-2 hover:bg-blue-700">
-                        <item.icon className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
-                        {!collapsed && <span>{item.name}</span>}
-                    </Link>
+                    <div key={index}>
+                        <Link to={item.route} className="flex items-center p-2 hover:bg-blue-700">
+                            <item.icon className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
+                            {!collapsed && <span>{item.name}</span>}
+                        </Link>
+                        {index % 2 === 1 && index < menuItems.length - 1 && (
+                            <div className="border-t border-blue-700 my-2"></div>
+                        )}
+                    </div>
                 ))}
+            </div>
+            <div className="p-2 border-t border-blue-700">
+                <Link to="/logout" className="flex items-center p-2 hover:bg-blue-700">
+                    <FaSignOutAlt className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
+                    {!collapsed && <span>Log Out</span>}
+                </Link>
             </div>
         </div>
     );
