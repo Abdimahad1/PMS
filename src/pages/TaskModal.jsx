@@ -1,7 +1,7 @@
 import React from 'react';
-import { FaTimes, FaCheck, FaTrash } from 'react-icons/fa';
+import { FaTimes, FaCheck, FaTrash, FaPlus } from 'react-icons/fa';
 
-const TaskModal = ({ task, onClose, toggleSubTaskCompletion, handleDeleteSubTask }) => {
+const TaskModal = ({ task, onClose, toggleSubTaskCompletion, handleDeleteSubTask, handleAddSubTask }) => {
   const subTaskColors = ['bg-red-200', 'bg-blue-200', 'bg-green-200', 'bg-yellow-200', 'bg-purple-200'];
 
   return (
@@ -9,9 +9,14 @@ const TaskModal = ({ task, onClose, toggleSubTaskCompletion, handleDeleteSubTask
       <div className="bg-white p-6 rounded-lg shadow-lg w-2/3">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">{task.name} Sub-tasks</h2>
-          <button onClick={onClose}>
-            <FaTimes className="text-gray-500" />
-          </button>
+          <div className="flex items-center space-x-4">
+            <button onClick={() => handleAddSubTask(task)} className="text-blue-500 hover:text-blue-700">
+              <FaPlus />
+            </button>
+            <button onClick={onClose}>
+              <FaTimes className="text-gray-500" />
+            </button>
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
           {task.subTasks.map((subTask, index) => (

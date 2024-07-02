@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaEllipsisV, FaCheck, FaTrash } from 'react-icons/fa';
+import { FaSearch, FaEllipsisV, FaCheck, FaTrash, FaPlus } from 'react-icons/fa';
 import TaskModal from './TaskModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -138,7 +138,54 @@ const Home = () => {
       return task;
     });
     setTasks(updatedTasks);
+    if (selectedTask) {
+      setSelectedTask({
+        ...selectedTask,
+        subTasks: selectedTask.subTasks.filter(st => st.name !== subTask.name),
+      });
+    }
     toast.dismiss();
+  };
+
+  const handleAddMainTask = () => {
+    const newTaskName = prompt('Enter the name of the new main task:');
+    if (newTaskName) {
+      const newTask = {
+        name: newTaskName,
+        progress: 0,
+        tasks: 0,
+        daysLeft: 0,
+        bgColor: 'bg-gray-200',
+        subTasks: [],
+      };
+      setTasks([...tasks, newTask]);
+    }
+  };
+
+  const handleAddSubTask = (mainTask) => {
+    const newSubTaskName = prompt('Enter the name of the new sub-task:');
+    if (newSubTaskName) {
+      const updatedTasks = tasks.map(task => {
+        if (task.name === mainTask.name) {
+          return {
+            ...task,
+            subTasks: [
+              ...task.subTasks,
+              { name: newSubTaskName, dueDate: '2024-07-30', progress: 0 },
+            ],
+          };
+        }
+        return task;
+      });
+      setTasks(updatedTasks);
+      setSelectedTask({
+        ...mainTask,
+        subTasks: [
+          ...mainTask.subTasks,
+          { name: newSubTaskName, dueDate: '2024-07-30', progress: 0 },
+        ],
+      });
+    }
   };
 
   const filteredTasks = tasks.filter(task =>
@@ -169,15 +216,23 @@ const Home = () => {
           <h1 className="text-2xl font-bold">Hi, Abdimahad 👋</h1>
           <p className="text-gray-500">{currentDate}</p>
         </div>
-        <div className="relative">
-          <FaSearch className="absolute top-2 left-3 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search project"
-            className="pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <div className="flex space-x-4">
+          <div className="relative">
+            <FaSearch className="absolute top-2 left-3 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search project"
+              className="pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-sm hover:bg-blue-600 transition duration-300"
+            onClick={handleAddMainTask}
+          >
+            <FaPlus className="mr-2" /> Add Main Task
+          </button>
         </div>
       </header>
       <section className="flex justify-around bg-white p-4 rounded-lg shadow-md">
@@ -252,6 +307,7 @@ const Home = () => {
           onClose={handleCloseModal}
           toggleSubTaskCompletion={toggleSubTaskCompletion}
           handleDeleteSubTask={handleDeleteSubTask}
+          handleAddSubTask={handleAddSubTask}
         />
       )}
     </div>
