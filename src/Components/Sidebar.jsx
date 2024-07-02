@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaHome, FaTasks, FaBell, FaProjectDiagram, FaCog, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaTasks, FaBell, FaProjectDiagram, FaCog, FaUserCircle, FaSignOutAlt, FaCalendarAlt } from 'react-icons/fa';
 
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -10,7 +10,8 @@ const Sidebar = () => {
         { name: 'My Tasks', icon: FaTasks, route: '/tasks' },
         { name: 'Notifications', icon: FaBell, route: '/notifications' },
         { name: 'Projects', icon: FaProjectDiagram, route: '/projects' },
-        { name: 'Settings', icon: FaCog, route: '/settings' }
+        { name: 'Calendar', icon: FaCalendarAlt, route: '/calendar' }, // Added Calendar item
+        { name: 'Settings', icon: FaCog, route: '/settings' } // Settings item is now the last
     ];
 
     return (
