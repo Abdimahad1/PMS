@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { FaSearch, FaEllipsisV, FaCheck } from 'react-icons/fa';
+import { FaSearch, FaEllipsisV, FaCheck, FaTrash } from 'react-icons/fa';
+import TaskModal from './TaskModal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Home = () => {
   const currentDate = new Date().toLocaleDateString('en-GB', {
@@ -10,15 +13,48 @@ const Home = () => {
   });
 
   const initialTasks = [
-    { name: 'Web Development', progress: 93, tasks: 15, daysLeft: 3, bgColor: 'bg-yellow-200' },
-    { name: 'Mobile App Design', progress: 45, tasks: 10, daysLeft: 3, bgColor: 'bg-purple-200' },
-    { name: 'Android Development', progress: 69, tasks: 12, daysLeft: 3, bgColor: 'bg-green-200' },
-    { name: 'Data Analytics', progress: 45, tasks: 10, daysLeft: 3, bgColor: 'bg-blue-200' },
-    { name: 'User Research Experience', progress: 93, tasks: 15, daysLeft: 3, bgColor: 'bg-teal-200' },
-    { name: 'Cyber Security', progress: 69, tasks: 12, daysLeft: 3, bgColor: 'bg-pink-200' },
+    {
+      name: 'Web Development',
+      progress: 93,
+      tasks: 3,
+      daysLeft: 3,
+      bgColor: 'bg-yellow-200',
+      subTasks: [
+        { name: 'Frontend Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'Backend Development', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Database Integration', dueDate: '2024-07-25', progress: 0 },
+      ],
+    },
+    {
+      name: 'Mobile App Design',
+      progress: 45,
+      tasks: 3,
+      daysLeft: 3,
+      bgColor: 'bg-purple-200',
+      subTasks: [
+        { name: 'UI Design', dueDate: '2024-07-15', progress: 0 },
+        { name: 'UX Research', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Prototype Creation', dueDate: '2024-07-25', progress: 0 },
+      ],
+    },
+    {
+      name: 'Android Development',
+      progress: 69,
+      tasks: 3,
+      daysLeft: 3,
+      bgColor: 'bg-green-200',
+      subTasks: [
+        { name: 'UI Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'API Integration', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
+      ],
+    },
+    // Add more tasks here
   ];
 
   const [tasks, setTasks] = useState(initialTasks);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const handleTaskCompletionToggle = (index) => {
     const updatedTasks = tasks.map((task, idx) => {
@@ -30,13 +66,104 @@ const Home = () => {
     setTasks(updatedTasks);
   };
 
-  const inProgressCount = tasks.filter(task => task.progress > 0 && task.progress < 100).length;
-  const upcomingCount = tasks.filter(task => task.progress === 0).length;
-  const doneCount = tasks.filter(task => task.progress === 100).length;
-  const totalCount = tasks.length;
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedTask(null);
+  };
+
+  const toggleSubTaskCompletion = (mainTask, subTask) => {
+    const updatedTasks = tasks.map(task => {
+      if (task.name === mainTask.name) {
+        return {
+          ...task,
+          subTasks: task.subTasks.map(st => {
+            if (st.name === subTask.name) {
+              return { ...st, progress: st.progress === 100 ? 0 : 100 };
+            }
+            return st;
+          }),
+        };
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+  };
+
+  const handleDeleteTask = (task) => {
+    toast.warning(
+      <div>
+        <p>Are you sure you want to delete "{task.name}"?</p>
+        <p>This task contains {task.subTasks.length} sub-tasks.</p>
+        <button
+          className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
+          onClick={() => confirmDeleteTask(task)}
+        >
+          Confirm
+        </button>
+      </div>
+    );
+  };
+
+  const confirmDeleteTask = (task) => {
+    const updatedTasks = tasks.filter(t => t.name !== task.name);
+    setTasks(updatedTasks);
+    toast.dismiss();
+  };
+
+  const handleDeleteSubTask = (mainTask, subTask) => {
+    toast.warning(
+      <div>
+        <p>Are you sure you want to delete this sub-task?</p>
+        <button
+          className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
+          onClick={() => confirmDeleteSubTask(mainTask, subTask)}
+        >
+          Confirm
+        </button>
+      </div>
+    );
+  };
+
+  const confirmDeleteSubTask = (mainTask, subTask) => {
+    const updatedTasks = tasks.map(task => {
+      if (task.name === mainTask.name) {
+        return {
+          ...task,
+          subTasks: task.subTasks.filter(st => st.name !== subTask.name),
+        };
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+    toast.dismiss();
+  };
+
+  const filteredTasks = tasks.filter(task =>
+    task.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const inProgressCount = tasks.reduce((count, task) => {
+    return count + task.subTasks.filter(subTask => subTask.progress > 0 && subTask.progress < 100).length;
+  }, tasks.filter(task => task.progress > 0 && task.progress < 100).length);
+
+  const upcomingCount = tasks.reduce((count, task) => {
+    return count + task.subTasks.filter(subTask => subTask.progress === 0).length;
+  }, tasks.filter(task => task.progress === 0).length);
+
+  const doneCount = tasks.reduce((count, task) => {
+    return count + task.subTasks.filter(subTask => subTask.progress === 100).length;
+  }, tasks.filter(task => task.progress === 100).length);
+
+  const totalCount = tasks.reduce((count, task) => {
+    return count + task.subTasks.length;
+  }, tasks.length);
 
   return (
     <div className="p-6 space-y-6">
+      <ToastContainer />
       <header className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Hi, Abdimahad 👋</h1>
@@ -48,6 +175,8 @@ const Home = () => {
             type="text"
             placeholder="Search project"
             className="pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </header>
@@ -70,14 +199,29 @@ const Home = () => {
         </div>
       </section>
       <section className="grid grid-cols-3 gap-4">
-        {tasks.map((task, index) => (
+        {filteredTasks.map((task, index) => (
           <div
             key={index}
-            className={`border rounded-lg p-4 shadow-sm ${task.bgColor} relative hover:shadow-lg transition-shadow duration-300`}
+            className={`border rounded-lg p-4 shadow-sm ${task.bgColor} relative hover:shadow-lg transition-shadow duration-300 cursor-pointer`}
+            onClick={() => handleTaskClick(task)}
           >
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-lg font-semibold">{task.name}</h3>
-              <FaEllipsisV className="text-gray-400" />
+              <div className="flex items-center space-x-2">
+                <button onClick={(e) => {
+                  e.stopPropagation();
+                  handleTaskCompletionToggle(index);
+                }}>
+                  <FaCheck className={`text-green-500 ${task.progress === 100 ? 'line-through' : ''}`} />
+                </button>
+                <button onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteTask(task);
+                }}>
+                  <FaTrash className="text-red-500" />
+                </button>
+                <FaEllipsisV className="text-gray-400" />
+              </div>
             </div>
             <div className="flex items-center mb-2">
               <img
@@ -86,15 +230,12 @@ const Home = () => {
                 className="h-10 w-10 rounded-full mr-2"
               />
               <div>
-                <p className="text-gray-500">{task.tasks} tasks</p>
+                <p className="text-gray-500">{task.subTasks.length} tasks</p>
                 <p className="text-gray-500">{task.daysLeft} days left</p>
               </div>
             </div>
             <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
               <p>{task.progress}%</p>
-              <button onClick={() => handleTaskCompletionToggle(index)}>
-                <FaCheck className={`text-green-500 ${task.progress === 100 ? 'line-through' : ''}`} />
-              </button>
             </div>
             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
               <div
@@ -105,6 +246,14 @@ const Home = () => {
           </div>
         ))}
       </section>
+      {selectedTask && (
+        <TaskModal
+          task={selectedTask}
+          onClose={handleCloseModal}
+          toggleSubTaskCompletion={toggleSubTaskCompletion}
+          handleDeleteSubTask={handleDeleteSubTask}
+        />
+      )}
     </div>
   );
 };
