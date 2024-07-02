@@ -16,44 +16,35 @@ const Home = () => {
   const initialTasks = [
     {
       name: 'Web Development',
-      startDate: '2024-07-01',
       dueDate: '2024-07-31',
       progress: 93,
-      tasks: 3,
-      daysLeft: 3,
       bgColor: 'bg-yellow-200',
       subTasks: [
-        { name: 'Frontend Development', startDate: '2024-07-01', dueDate: '2024-07-15', progress: 0 },
-        { name: 'Backend Development', startDate: '2024-07-01', dueDate: '2024-07-20', progress: 0 },
-        { name: 'Database Integration', startDate: '2024-07-01', dueDate: '2024-07-25', progress: 0 },
+        { name: 'Frontend Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'Backend Development', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Database Integration', dueDate: '2024-07-25', progress: 0 },
       ],
     },
     {
       name: 'Mobile App Design',
-      startDate: '2024-07-01',
       dueDate: '2024-07-31',
       progress: 45,
-      tasks: 3,
-      daysLeft: 3,
       bgColor: 'bg-purple-200',
       subTasks: [
-        { name: 'UI Design', startDate: '2024-07-01', dueDate: '2024-07-15', progress: 0 },
-        { name: 'UX Research', startDate: '2024-07-01', dueDate: '2024-07-20', progress: 0 },
-        { name: 'Prototype Creation', startDate: '2024-07-01', dueDate: '2024-07-25', progress: 0 },
+        { name: 'UI Design', dueDate: '2024-07-15', progress: 0 },
+        { name: 'UX Research', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Prototype Creation', dueDate: '2024-07-25', progress: 0 },
       ],
     },
     {
       name: 'Android Development',
-      startDate: '2024-07-01',
       dueDate: '2024-07-31',
       progress: 69,
-      tasks: 3,
-      daysLeft: 3,
       bgColor: 'bg-green-200',
       subTasks: [
-        { name: 'UI Development', startDate: '2024-07-01', dueDate: '2024-07-15', progress: 0 },
-        { name: 'API Integration', startDate: '2024-07-01', dueDate: '2024-07-20', progress: 0 },
-        { name: 'Testing', startDate: '2024-07-01', dueDate: '2024-07-25', progress: 0 },
+        { name: 'UI Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'API Integration', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
       ],
     },
     // Add more tasks here
@@ -61,40 +52,12 @@ const Home = () => {
 
   const [tasks, setTasks] = useState(initialTasks);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTask, setSelectedTask] = useState(null);
   const [isAddingTask, setIsAddingTask] = useState(false);
-  const [isEditingTask, setIsEditingTask] = useState(false);
 
   const handleTaskCompletionToggle = (index) => {
     const updatedTasks = tasks.map((task, idx) => {
       if (idx === index) {
         return { ...task, progress: task.progress === 100 ? 0 : 100 };
-      }
-      return task;
-    });
-    setTasks(updatedTasks);
-  };
-
-  const handleTaskClick = (task) => {
-    setSelectedTask(task);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedTask(null);
-  };
-
-  const toggleSubTaskCompletion = (mainTask, subTask) => {
-    const updatedTasks = tasks.map(task => {
-      if (task.name === mainTask.name) {
-        return {
-          ...task,
-          subTasks: task.subTasks.map(st => {
-            if (st.name === subTask.name) {
-              return { ...st, progress: st.progress === 100 ? 0 : 100 };
-            }
-            return st;
-          }),
-        };
       }
       return task;
     });
@@ -147,63 +110,38 @@ const Home = () => {
       return task;
     });
     setTasks(updatedTasks);
-    if (selectedTask) {
-      setSelectedTask({
-        ...selectedTask,
-        subTasks: selectedTask.subTasks.filter(st => st.name !== subTask.name),
-      });
-    }
     toast.dismiss();
   };
 
-  const handleSaveTask = (newTask) => {
-    if (isEditingTask) {
-      const updatedTasks = tasks.map(task =>
-        task.name === selectedTask.name ? { ...selectedTask, ...newTask } : task
-      );
-      setTasks(updatedTasks);
-    } else {
-      setTasks([...tasks, { ...newTask, subTasks: [], progress: 0, tasks: 0, daysLeft: 0, bgColor: 'bg-gray-200' }]);
-    }
-    setIsAddingTask(false);
-    setIsEditingTask(false);
+  const handleSaveTask = (updatedTask, index, subTaskIndex = null) => {
+    const updatedTasks = tasks.map((task, idx) => {
+      if (idx === index) {
+        if (subTaskIndex !== null) {
+          const updatedSubTasks = task.subTasks.map((subTask, subIdx) => {
+            if (subIdx === subTaskIndex) {
+              return { ...subTask, ...updatedTask };
+            }
+            return subTask;
+          });
+          return { ...task, subTasks: updatedSubTasks };
+        } else {
+          return { ...task, ...updatedTask };
+        }
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+    toast.success("Task updated successfully!");
   };
 
   const handleAddMainTask = () => {
     setIsAddingTask(true);
   };
 
-  const handleEditTask = (task) => {
-    setSelectedTask(task);
-    setIsEditingTask(true);
-  };
-
-  const handleAddSubTask = (mainTask) => {
-    setSelectedTask(mainTask);
-    setIsAddingSubTask(true);
-  };
-
-  const handleSaveSubTask = (mainTask, newSubTask) => {
-    const updatedTasks = tasks.map(task => {
-      if (task.name === mainTask.name) {
-        const updatedSubTasks = task.subTasks.map(subTask =>
-          subTask.name === newSubTask.name ? newSubTask : subTask
-        );
-
-        if (!updatedSubTasks.some(subTask => subTask.name === newSubTask.name)) {
-          updatedSubTasks.push(newSubTask);
-        }
-
-        return {
-          ...task,
-          subTasks: updatedSubTasks,
-        };
-      }
-      return task;
-    });
-
-    setTasks(updatedTasks);
-    setSelectedTask(null);
+  const handleAddTask = (newTask) => {
+    setTasks([...tasks, { ...newTask, progress: 0, subTasks: [], bgColor: 'bg-gray-200' }]);
+    toast.success("Task saved successfully!");
+    setIsAddingTask(false);
   };
 
   const filteredTasks = tasks.filter(task =>
@@ -227,7 +165,7 @@ const Home = () => {
   }, tasks.length);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 overflow-auto">
       <ToastContainer />
       <header className="flex justify-between items-center">
         <div>
@@ -271,89 +209,218 @@ const Home = () => {
           <p className="text-gray-500">Total Projects</p>
         </div>
       </section>
-      {isAddingTask && (
-        <TaskForm
-          initialData={{ name: '', startDate: '', dueDate: '' }}
-          onSave={handleSaveTask}
-          onCancel={() => setIsAddingTask(false)}
-          isEditing={false}
-        />
-      )}
-      {isEditingTask && (
-        <TaskForm
-          initialData={selectedTask}
-          onSave={handleSaveTask}
-          onCancel={() => setIsEditingTask(false)}
-          isEditing={true}
-        />
-      )}
       <section className="grid grid-cols-3 gap-4">
         {filteredTasks.map((task, index) => (
-          <div
+          <TaskCard
             key={index}
-            className={`border rounded-lg p-4 shadow-sm ${task.bgColor} relative hover:shadow-lg transition-shadow duration-300 cursor-default`}
-          >
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-lg font-semibold">{task.name}</h3>
-              <div className="flex items-center space-x-2">
-                <button onClick={(e) => {
-                  e.stopPropagation();
-                  handleTaskCompletionToggle(index);
-                }}>
-                  <FaCheck className={`text-green-500 ${task.progress === 100 ? 'line-through' : ''}`} />
-                </button>
-                <button onClick={(e) => {
-                  e.stopPropagation();
-                  handleEditTask(task);
-                }}>
-                  <FaEdit className="text-blue-500" />
-                </button>
-                <button onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteTask(task);
-                }}>
-                  <FaTrash className="text-red-500" />
-                </button>
-                <button onClick={(e) => {
-                  e.stopPropagation();
-                  handleTaskClick(task);
-                }}>
-                  <FaEllipsisV className="text-gray-400" />
-                </button>
-              </div>
-            </div>
-            <div className="flex items-center mb-2">
-              <img
-                src={`https://via.placeholder.com/40?text=${task.name.charAt(0)}`}
-                alt={`${task.name}`}
-                className="h-10 w-10 rounded-full mr-2"
-              />
-              <div>
-                <p className="text-gray-500">{task.subTasks.length} tasks</p>
-                <p className="text-gray-500">{task.daysLeft} days left</p>
-              </div>
-            </div>
-            <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
-              <p>{task.progress}%</p>
-            </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-500"
-                style={{ width: `${task.progress}%` }}
-              ></div>
-            </div>
-          </div>
+            task={task}
+            index={index}
+            onToggleCompletion={handleTaskCompletionToggle}
+            onSave={handleSaveTask}
+            onDelete={handleDeleteTask}
+            onDeleteSubTask={confirmDeleteSubTask}
+          />
         ))}
       </section>
-      {selectedTask && (
-        <TaskModal
-          task={selectedTask}
-          onClose={handleCloseModal}
-          toggleSubTaskCompletion={toggleSubTaskCompletion}
-          handleDeleteSubTask={handleDeleteSubTask}
-          handleAddSubTask={handleAddSubTask}
-          handleSaveSubTask={handleSaveSubTask}
-        />
+    </div>
+  );
+};
+
+const TaskCard = ({ task, index, onToggleCompletion, onSave, onDelete, onDeleteSubTask }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTask, setEditedTask] = useState({ ...task });
+  const [showSubTasks, setShowSubTasks] = useState(false);
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+    setEditedTask({ ...task });
+  };
+
+  const handleSaveChanges = () => {
+    onSave(editedTask, index);
+    setIsEditing(false);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditedTask(prev => ({ ...prev, [name]: value }));
+  };
+
+  return (
+    <div className={`border rounded-lg p-4 shadow-sm ${task.bgColor} relative hover:shadow-lg transition-shadow duration-300 cursor-default`}>
+      <div className="flex justify-between items-center mb-2">
+        {isEditing ? (
+          <input
+            type="text"
+            name="name"
+            value={editedTask.name}
+            onChange={handleChange}
+            className="text-lg font-semibold border-b-2 focus:outline-none"
+          />
+        ) : (
+          <h3 className="text-lg font-semibold">{task.name}</h3>
+        )}
+        <div className="flex items-center space-x-2">
+          <button onClick={() => onToggleCompletion(index)}>
+            <FaCheck className={`text-green-500 ${task.progress === 100 ? 'line-through' : ''}`} />
+          </button>
+          <button onClick={handleEditToggle}>
+            <FaEdit className="text-blue-500" />
+          </button>
+          <button onClick={() => onDelete(task)}>
+            <FaTrash className="text-red-500" />
+          </button>
+          <button onClick={() => setShowSubTasks(!showSubTasks)}>
+            <FaEllipsisV className="text-gray-400" />
+          </button>
+        </div>
+      </div>
+      {isEditing ? (
+        <>
+          <input
+            type="date"
+            name="dueDate"
+            value={editedTask.dueDate}
+            onChange={handleChange}
+            className="mb-2 w-full border-b-2 focus:outline-none"
+          />
+          <div className="flex justify-end space-x-4">
+            <button
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+              onClick={() => setIsEditing(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700"
+              onClick={handleSaveChanges}
+            >
+              Update
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="flex items-center mb-2">
+            <img
+              src={`https://via.placeholder.com/40?text=${task.name.charAt(0)}`}
+              alt={`${task.name}`}
+              className="h-10 w-10 rounded-full mr-2"
+            />
+            <div>
+              <p className="text-gray-500">{task.subTasks.length} tasks</p>
+              <p className="text-gray-500">{task.daysLeft} days left</p>
+            </div>
+          </div>
+          <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
+            <p>{task.progress}%</p>
+          </div>
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-blue-500"
+              style={{ width: `${task.progress}%` }}
+            ></div>
+          </div>
+        </>
+      )}
+      {showSubTasks && task.subTasks.length > 0 && (
+        <div className="mt-4">
+          <h4 className="text-md font-semibold">Sub-tasks:</h4>
+          {task.subTasks.map((subTask, subIndex) => (
+            <SubTaskCard
+              key={subIndex}
+              subTask={subTask}
+              mainTaskIndex={index}
+              subTaskIndex={subIndex}
+              onSave={onSave}
+              onDelete={onDeleteSubTask}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const SubTaskCard = ({ subTask, mainTaskIndex, subTaskIndex, onSave, onDelete }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedSubTask, setEditedSubTask] = useState({ ...subTask });
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+    setEditedSubTask({ ...subTask });
+  };
+
+  const handleSaveChanges = () => {
+    onSave(editedSubTask, mainTaskIndex, subTaskIndex);
+    setIsEditing(false);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditedSubTask(prev => ({ ...prev, [name]: value }));
+  };
+
+  return (
+    <div className={`border rounded-lg p-4 shadow-sm bg-white mt-2 hover:shadow-lg transition-shadow duration-300 cursor-default`}>
+      <div className="flex justify-between items-center mb-2">
+        {isEditing ? (
+          <input
+            type="text"
+            name="name"
+            value={editedSubTask.name}
+            onChange={handleChange}
+            className="text-md font-semibold border-b-2 focus:outline-none"
+          />
+        ) : (
+          <h4 className="text-md font-semibold">{subTask.name}</h4>
+        )}
+        <div className="flex items-center space-x-2">
+          <button onClick={handleEditToggle}>
+            <FaEdit className="text-blue-500" />
+          </button>
+          <button onClick={() => onDelete(editedSubTask)}>
+            <FaTrash className="text-red-500" />
+          </button>
+        </div>
+      </div>
+      {isEditing ? (
+        <>
+          <input
+            type="date"
+            name="dueDate"
+            value={editedSubTask.dueDate}
+            onChange={handleChange}
+            className="mb-2 w-full border-b-2 focus:outline-none"
+          />
+          <div className="flex justify-end space-x-4">
+            <button
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+              onClick={() => setIsEditing(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700"
+              onClick={handleSaveChanges}
+            >
+              Update
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="text-gray-500">{subTask.dueDate}</p>
+          <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
+            <p>{subTask.progress}%</p>
+          </div>
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-blue-500"
+              style={{ width: `${subTask.progress}%` }}
+            ></div>
+          </div>
+        </>
       )}
     </div>
   );

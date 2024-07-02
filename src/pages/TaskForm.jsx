@@ -2,27 +2,28 @@ import React, { useState, useEffect } from 'react';
 
 const TaskForm = ({ initialData, onSave, onUpdate, onCancel, isEditing }) => {
   const [name, setName] = useState(initialData ? initialData.name : '');
-  const [startDate, setStartDate] = useState(initialData ? initialData.startDate : '');
   const [dueDate, setDueDate] = useState(initialData ? initialData.dueDate : '');
+  const [progress, setProgress] = useState(initialData ? initialData.progress : 0);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (initialData) {
       setName(initialData.name);
-      setStartDate(initialData.startDate);
       setDueDate(initialData.dueDate);
+      setProgress(initialData.progress);
     }
   }, [initialData]);
 
   const handleSave = () => {
-    if (!name || !startDate || !dueDate) {
+    if (!name || !dueDate) {
       setError('All fields are required.');
       return;
     }
+    const taskData = { name, dueDate, progress };
     if (isEditing) {
-      onUpdate({ name, startDate, dueDate });
+      onUpdate(taskData);
     } else {
-      onSave({ name, startDate, dueDate });
+      onSave(taskData);
     }
   };
 
@@ -42,18 +43,6 @@ const TaskForm = ({ initialData, onSave, onUpdate, onCancel, isEditing }) => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700">Start Date</label>
-        <input
-          type="date"
-          className="w-full px-4 py-2 border rounded-lg"
-          value={startDate}
-          onChange={(e) => {
-            setStartDate(e.target.value);
-            setError('');
-          }}
-        />
-      </div>
-      <div className="mb-4">
         <label className="block text-gray-700">Due Date</label>
         <input
           type="date"
@@ -63,6 +52,20 @@ const TaskForm = ({ initialData, onSave, onUpdate, onCancel, isEditing }) => {
             setDueDate(e.target.value);
             setError('');
           }}
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700">Progress</label>
+        <input
+          type="number"
+          className="w-full px-4 py-2 border rounded-lg"
+          value={progress}
+          onChange={(e) => {
+            setProgress(e.target.value);
+            setError('');
+          }}
+          min="0"
+          max="100"
         />
       </div>
       <div className="flex justify-end space-x-4">
