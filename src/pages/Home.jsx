@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaSearch, FaEllipsisV } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaSearch, FaEllipsisV, FaCheck } from 'react-icons/fa';
 
 const Home = () => {
   const currentDate = new Date().toLocaleDateString('en-GB', {
@@ -9,14 +9,31 @@ const Home = () => {
     year: 'numeric',
   });
 
-  const tasks = [
-    { name: 'Web Development', progress: 93, tasks: 15, daysLeft: 3 },
-    { name: 'Mobile App Design', progress: 45, tasks: 10, daysLeft: 3 },
-    { name: 'Android Development', progress: 69, tasks: 12, daysLeft: 3 },
-    { name: 'Data Analytics', progress: 45, tasks: 10, daysLeft: 3 },
-    { name: 'User Research Experience', progress: 93, tasks: 15, daysLeft: 3 },
-    { name: 'Cyber Security', progress: 69, tasks: 12, daysLeft: 3 },
+  const initialTasks = [
+    { name: 'Web Development', progress: 93, tasks: 15, daysLeft: 3, bgColor: 'bg-yellow-200' },
+    { name: 'Mobile App Design', progress: 45, tasks: 10, daysLeft: 3, bgColor: 'bg-purple-200' },
+    { name: 'Android Development', progress: 69, tasks: 12, daysLeft: 3, bgColor: 'bg-green-200' },
+    { name: 'Data Analytics', progress: 45, tasks: 10, daysLeft: 3, bgColor: 'bg-blue-200' },
+    { name: 'User Research Experience', progress: 93, tasks: 15, daysLeft: 3, bgColor: 'bg-teal-200' },
+    { name: 'Cyber Security', progress: 69, tasks: 12, daysLeft: 3, bgColor: 'bg-pink-200' },
   ];
+
+  const [tasks, setTasks] = useState(initialTasks);
+
+  const handleTaskCompletionToggle = (index) => {
+    const updatedTasks = tasks.map((task, idx) => {
+      if (idx === index) {
+        return { ...task, progress: task.progress === 100 ? 0 : 100 };
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+  };
+
+  const inProgressCount = tasks.filter(task => task.progress > 0 && task.progress < 100).length;
+  const upcomingCount = tasks.filter(task => task.progress === 0).length;
+  const doneCount = tasks.filter(task => task.progress === 100).length;
+  const totalCount = tasks.length;
 
   return (
     <div className="p-6 space-y-6">
@@ -34,27 +51,30 @@ const Home = () => {
           />
         </div>
       </header>
-      <section className="grid grid-cols-4 gap-4 text-center">
-        <div>
-          <p className="text-xl font-bold">25</p>
+      <section className="flex justify-around bg-white p-4 rounded-lg shadow-md">
+        <div className="text-center">
+          <p className="text-xl font-bold">{inProgressCount}</p>
           <p className="text-gray-500">In Progress</p>
         </div>
-        <div>
-          <p className="text-xl font-bold">10</p>
+        <div className="text-center">
+          <p className="text-xl font-bold">{upcomingCount}</p>
           <p className="text-gray-500">Upcoming</p>
         </div>
-        <div>
-          <p className="text-xl font-bold">9</p>
+        <div className="text-center">
+          <p className="text-xl font-bold">{doneCount}</p>
           <p className="text-gray-500">Done</p>
         </div>
-        <div>
-          <p className="text-xl font-bold">44</p>
+        <div className="text-center">
+          <p className="text-xl font-bold">{totalCount}</p>
           <p className="text-gray-500">Total Projects</p>
         </div>
       </section>
       <section className="grid grid-cols-3 gap-4">
         {tasks.map((task, index) => (
-          <div key={index} className="border rounded-lg p-4 shadow-sm bg-white">
+          <div
+            key={index}
+            className={`border rounded-lg p-4 shadow-sm ${task.bgColor} relative hover:shadow-lg transition-shadow duration-300`}
+          >
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-lg font-semibold">{task.name}</h3>
               <FaEllipsisV className="text-gray-400" />
@@ -72,6 +92,9 @@ const Home = () => {
             </div>
             <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
               <p>{task.progress}%</p>
+              <button onClick={() => handleTaskCompletionToggle(index)}>
+                <FaCheck className={`text-green-500 ${task.progress === 100 ? 'line-through' : ''}`} />
+              </button>
             </div>
             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
               <div
