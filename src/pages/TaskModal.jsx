@@ -1,8 +1,23 @@
-import React from 'react';
-import { FaTimes, FaCheck, FaTrash, FaPlus } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaTimes, FaCheck, FaTrash, FaPlus, FaEdit } from 'react-icons/fa';
+import TaskForm from './TaskForm';
 
-const TaskModal = ({ task, onClose, toggleSubTaskCompletion, handleDeleteSubTask, handleAddSubTask }) => {
+const TaskModal = ({ task, onClose, toggleSubTaskCompletion, handleDeleteSubTask, handleAddSubTask, handleSaveSubTask }) => {
+  const [isAddingSubTask, setIsAddingSubTask] = useState(false);
+  const [isEditingSubTask, setIsEditingSubTask] = useState(false);
+  const [selectedSubTask, setSelectedSubTask] = useState(null);
+
   const subTaskColors = ['bg-red-200', 'bg-blue-200', 'bg-green-200', 'bg-yellow-200', 'bg-purple-200'];
+
+  const handleSaveSubTaskForm = (newSubTask) => {
+    if (isEditingSubTask) {
+      handleSaveSubTask(task, { ...selectedSubTask, ...newSubTask });
+    } else {
+      handleSaveSubTask(task, newSubTask);
+    }
+    setIsAddingSubTask(false);
+    setIsEditingSubTask(false);
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -10,7 +25,7 @@ const TaskModal = ({ task, onClose, toggleSubTaskCompletion, handleDeleteSubTask
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">{task.name} Sub-tasks</h2>
           <div className="flex items-center space-x-4">
-            <button onClick={() => handleAddSubTask(task)} className="text-blue-500 hover:text-blue-700">
+            <button onClick={() => setIsAddingSubTask(true)} className="text-blue-500 hover:text-blue-700">
               <FaPlus />
             </button>
             <button onClick={onClose}>
@@ -18,6 +33,22 @@ const TaskModal = ({ task, onClose, toggleSubTaskCompletion, handleDeleteSubTask
             </button>
           </div>
         </div>
+        {isAddingSubTask && (
+          <TaskForm
+            initialData={{ name: '', startDate: '', dueDate: '' }}
+            onSave={handleSaveSubTaskForm}
+            onCancel={() => setIsAddingSubTask(false)}
+            isEditing={false}
+          />
+        )}
+        {isEditingSubTask && (
+          <TaskForm
+            initialData={selectedSubTask}
+            onSave={handleSaveSubTaskForm}
+            onCancel={() => setIsEditingSubTask(false)}
+            isEditing={true}
+          />
+        )}
         <div className="grid grid-cols-3 gap-4">
           {task.subTasks.map((subTask, index) => (
             <div
@@ -29,6 +60,12 @@ const TaskModal = ({ task, onClose, toggleSubTaskCompletion, handleDeleteSubTask
                 <div className="flex items-center space-x-2">
                   <button onClick={() => toggleSubTaskCompletion(task, subTask)}>
                     <FaCheck className={`text-green-500 ${subTask.progress === 100 ? 'line-through' : ''}`} />
+                  </button>
+                  <button onClick={() => {
+                    setSelectedSubTask(subTask);
+                    setIsEditingSubTask(true);
+                  }}>
+                    <FaEdit className="text-blue-500" />
                   </button>
                   <button onClick={() => handleDeleteSubTask(task, subTask)}>
                     <FaTrash className="text-red-500" />

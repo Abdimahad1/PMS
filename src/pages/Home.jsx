@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { FaSearch, FaEllipsisV, FaCheck, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaSearch, FaEllipsisV, FaCheck, FaTrash, FaPlus, FaEdit } from 'react-icons/fa';
 import TaskModal from './TaskModal';
+import TaskForm from './TaskForm';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -15,38 +16,44 @@ const Home = () => {
   const initialTasks = [
     {
       name: 'Web Development',
+      startDate: '2024-07-01',
+      dueDate: '2024-07-31',
       progress: 93,
       tasks: 3,
       daysLeft: 3,
       bgColor: 'bg-yellow-200',
       subTasks: [
-        { name: 'Frontend Development', dueDate: '2024-07-15', progress: 0 },
-        { name: 'Backend Development', dueDate: '2024-07-20', progress: 0 },
-        { name: 'Database Integration', dueDate: '2024-07-25', progress: 0 },
+        { name: 'Frontend Development', startDate: '2024-07-01', dueDate: '2024-07-15', progress: 0 },
+        { name: 'Backend Development', startDate: '2024-07-01', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Database Integration', startDate: '2024-07-01', dueDate: '2024-07-25', progress: 0 },
       ],
     },
     {
       name: 'Mobile App Design',
+      startDate: '2024-07-01',
+      dueDate: '2024-07-31',
       progress: 45,
       tasks: 3,
       daysLeft: 3,
       bgColor: 'bg-purple-200',
       subTasks: [
-        { name: 'UI Design', dueDate: '2024-07-15', progress: 0 },
-        { name: 'UX Research', dueDate: '2024-07-20', progress: 0 },
-        { name: 'Prototype Creation', dueDate: '2024-07-25', progress: 0 },
+        { name: 'UI Design', startDate: '2024-07-01', dueDate: '2024-07-15', progress: 0 },
+        { name: 'UX Research', startDate: '2024-07-01', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Prototype Creation', startDate: '2024-07-01', dueDate: '2024-07-25', progress: 0 },
       ],
     },
     {
       name: 'Android Development',
+      startDate: '2024-07-01',
+      dueDate: '2024-07-31',
       progress: 69,
       tasks: 3,
       daysLeft: 3,
       bgColor: 'bg-green-200',
       subTasks: [
-        { name: 'UI Development', dueDate: '2024-07-15', progress: 0 },
-        { name: 'API Integration', dueDate: '2024-07-20', progress: 0 },
-        { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
+        { name: 'UI Development', startDate: '2024-07-01', dueDate: '2024-07-15', progress: 0 },
+        { name: 'API Integration', startDate: '2024-07-01', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Testing', startDate: '2024-07-01', dueDate: '2024-07-25', progress: 0 },
       ],
     },
     // Add more tasks here
@@ -55,6 +62,8 @@ const Home = () => {
   const [tasks, setTasks] = useState(initialTasks);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTask, setSelectedTask] = useState(null);
+  const [isAddingTask, setIsAddingTask] = useState(false);
+  const [isEditingTask, setIsEditingTask] = useState(false);
 
   const handleTaskCompletionToggle = (index) => {
     const updatedTasks = tasks.map((task, idx) => {
@@ -147,45 +156,54 @@ const Home = () => {
     toast.dismiss();
   };
 
-  const handleAddMainTask = () => {
-    const newTaskName = prompt('Enter the name of the new main task:');
-    if (newTaskName) {
-      const newTask = {
-        name: newTaskName,
-        progress: 0,
-        tasks: 0,
-        daysLeft: 0,
-        bgColor: 'bg-gray-200',
-        subTasks: [],
-      };
-      setTasks([...tasks, newTask]);
+  const handleSaveTask = (newTask) => {
+    if (isEditingTask) {
+      const updatedTasks = tasks.map(task =>
+        task.name === selectedTask.name ? { ...selectedTask, ...newTask } : task
+      );
+      setTasks(updatedTasks);
+    } else {
+      setTasks([...tasks, { ...newTask, subTasks: [], progress: 0, tasks: 0, daysLeft: 0, bgColor: 'bg-gray-200' }]);
     }
+    setIsAddingTask(false);
+    setIsEditingTask(false);
+  };
+
+  const handleAddMainTask = () => {
+    setIsAddingTask(true);
+  };
+
+  const handleEditTask = (task) => {
+    setSelectedTask(task);
+    setIsEditingTask(true);
   };
 
   const handleAddSubTask = (mainTask) => {
-    const newSubTaskName = prompt('Enter the name of the new sub-task:');
-    if (newSubTaskName) {
-      const updatedTasks = tasks.map(task => {
-        if (task.name === mainTask.name) {
-          return {
-            ...task,
-            subTasks: [
-              ...task.subTasks,
-              { name: newSubTaskName, dueDate: '2024-07-30', progress: 0 },
-            ],
-          };
+    setSelectedTask(mainTask);
+    setIsAddingSubTask(true);
+  };
+
+  const handleSaveSubTask = (mainTask, newSubTask) => {
+    const updatedTasks = tasks.map(task => {
+      if (task.name === mainTask.name) {
+        const updatedSubTasks = task.subTasks.map(subTask =>
+          subTask.name === newSubTask.name ? newSubTask : subTask
+        );
+
+        if (!updatedSubTasks.some(subTask => subTask.name === newSubTask.name)) {
+          updatedSubTasks.push(newSubTask);
         }
-        return task;
-      });
-      setTasks(updatedTasks);
-      setSelectedTask({
-        ...mainTask,
-        subTasks: [
-          ...mainTask.subTasks,
-          { name: newSubTaskName, dueDate: '2024-07-30', progress: 0 },
-        ],
-      });
-    }
+
+        return {
+          ...task,
+          subTasks: updatedSubTasks,
+        };
+      }
+      return task;
+    });
+
+    setTasks(updatedTasks);
+    setSelectedTask(null);
   };
 
   const filteredTasks = tasks.filter(task =>
@@ -253,12 +271,27 @@ const Home = () => {
           <p className="text-gray-500">Total Projects</p>
         </div>
       </section>
+      {isAddingTask && (
+        <TaskForm
+          initialData={{ name: '', startDate: '', dueDate: '' }}
+          onSave={handleSaveTask}
+          onCancel={() => setIsAddingTask(false)}
+          isEditing={false}
+        />
+      )}
+      {isEditingTask && (
+        <TaskForm
+          initialData={selectedTask}
+          onSave={handleSaveTask}
+          onCancel={() => setIsEditingTask(false)}
+          isEditing={true}
+        />
+      )}
       <section className="grid grid-cols-3 gap-4">
         {filteredTasks.map((task, index) => (
           <div
             key={index}
-            className={`border rounded-lg p-4 shadow-sm ${task.bgColor} relative hover:shadow-lg transition-shadow duration-300 cursor-pointer`}
-            onClick={() => handleTaskClick(task)}
+            className={`border rounded-lg p-4 shadow-sm ${task.bgColor} relative hover:shadow-lg transition-shadow duration-300 cursor-default`}
           >
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-lg font-semibold">{task.name}</h3>
@@ -271,11 +304,22 @@ const Home = () => {
                 </button>
                 <button onClick={(e) => {
                   e.stopPropagation();
+                  handleEditTask(task);
+                }}>
+                  <FaEdit className="text-blue-500" />
+                </button>
+                <button onClick={(e) => {
+                  e.stopPropagation();
                   handleDeleteTask(task);
                 }}>
                   <FaTrash className="text-red-500" />
                 </button>
-                <FaEllipsisV className="text-gray-400" />
+                <button onClick={(e) => {
+                  e.stopPropagation();
+                  handleTaskClick(task);
+                }}>
+                  <FaEllipsisV className="text-gray-400" />
+                </button>
               </div>
             </div>
             <div className="flex items-center mb-2">
@@ -308,6 +352,7 @@ const Home = () => {
           toggleSubTaskCompletion={toggleSubTaskCompletion}
           handleDeleteSubTask={handleDeleteSubTask}
           handleAddSubTask={handleAddSubTask}
+          handleSaveSubTask={handleSaveSubTask}
         />
       )}
     </div>
