@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { FaSearch, FaEllipsisV, FaCheck, FaTrash, FaPlus, FaEdit } from 'react-icons/fa';
-import TaskModal from './TaskModal';
-import TaskForm from './TaskForm';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -53,11 +51,29 @@ const Home = () => {
   const [tasks, setTasks] = useState(initialTasks);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddingTask, setIsAddingTask] = useState(false);
+  const [selectedMainTask, setSelectedMainTask] = useState(null);
+  const [isAddingSubTask, setIsAddingSubTask] = useState(false);
 
   const handleTaskCompletionToggle = (index) => {
     const updatedTasks = tasks.map((task, idx) => {
       if (idx === index) {
         return { ...task, progress: task.progress === 100 ? 0 : 100 };
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+  };
+
+  const handleSubTaskCompletionToggle = (mainTaskIndex, subTaskIndex) => {
+    const updatedTasks = tasks.map((task, idx) => {
+      if (idx === mainTaskIndex) {
+        const updatedSubTasks = task.subTasks.map((subTask, sIdx) => {
+          if (sIdx === subTaskIndex) {
+            return { ...subTask, progress: subTask.progress === 100 ? 0 : 100 };
+          }
+          return subTask;
+        });
+        return { ...task, subTasks: updatedSubTasks };
       }
       return task;
     });
@@ -85,13 +101,13 @@ const Home = () => {
     toast.dismiss();
   };
 
-  const handleDeleteSubTask = (mainTask, subTask) => {
+  const handleDeleteSubTask = (mainTaskIndex, subTaskIndex) => {
     toast.warning(
       <div>
         <p>Are you sure you want to delete this sub-task?</p>
         <button
           className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
-          onClick={() => confirmDeleteSubTask(mainTask, subTask)}
+          onClick={() => confirmDeleteSubTask(mainTaskIndex, subTaskIndex)}
         >
           Confirm
         </button>
@@ -99,12 +115,12 @@ const Home = () => {
     );
   };
 
-  const confirmDeleteSubTask = (mainTask, subTask) => {
-    const updatedTasks = tasks.map(task => {
-      if (task.name === mainTask.name) {
+  const confirmDeleteSubTask = (mainTaskIndex, subTaskIndex) => {
+    const updatedTasks = tasks.map((task, idx) => {
+      if (idx === mainTaskIndex) {
         return {
           ...task,
-          subTasks: task.subTasks.filter(st => st.name !== subTask.name),
+          subTasks: task.subTasks.filter((_, sIdx) => sIdx !== subTaskIndex),
         };
       }
       return task;
@@ -142,6 +158,26 @@ const Home = () => {
     setTasks([...tasks, { ...newTask, progress: 0, subTasks: [], bgColor: 'bg-gray-200' }]);
     toast.success("Task saved successfully!");
     setIsAddingTask(false);
+  };
+
+  const handleAddSubTask = (mainTask) => {
+    setSelectedMainTask(mainTask);
+    setIsAddingSubTask(true);
+  };
+
+  const handleSaveSubTask = (mainTask, newSubTask) => {
+    const updatedTasks = tasks.map(task => {
+      if (task.name === mainTask.name) {
+        return {
+          ...task,
+          subTasks: [...task.subTasks, newSubTask],
+        };
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+    setIsAddingSubTask(false);
+    toast.success("Sub-task added successfully!");
   };
 
   const filteredTasks = tasks.filter(task =>
@@ -218,15 +254,24 @@ const Home = () => {
             onToggleCompletion={handleTaskCompletionToggle}
             onSave={handleSaveTask}
             onDelete={handleDeleteTask}
-            onDeleteSubTask={confirmDeleteSubTask}
+            onDeleteSubTask={handleDeleteSubTask}
+            onAddSubTask={handleAddSubTask}
+            onToggleSubTaskCompletion={handleSubTaskCompletionToggle}
           />
         ))}
       </section>
+      {isAddingSubTask && (
+        <SubTaskForm
+          mainTask={selectedMainTask}
+          onSave={handleSaveSubTask}
+          onCancel={() => setIsAddingSubTask(false)}
+        />
+      )}
     </div>
   );
 };
 
-const TaskCard = ({ task, index, onToggleCompletion, onSave, onDelete, onDeleteSubTask }) => {
+const TaskCard = ({ task, index, onToggleCompletion, onSave, onDelete, onDeleteSubTask, onAddSubTask, onToggleSubTaskCompletion }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState({ ...task });
   const [showSubTasks, setShowSubTasks] = useState(false);
@@ -266,6 +311,9 @@ const TaskCard = ({ task, index, onToggleCompletion, onSave, onDelete, onDeleteS
           </button>
           <button onClick={handleEditToggle}>
             <FaEdit className="text-blue-500" />
+          </button>
+          <button onClick={() => onAddSubTask(task)}>
+            <FaPlus className="text-blue-500" />
           </button>
           <button onClick={() => onDelete(task)}>
             <FaTrash className="text-red-500" />
@@ -334,6 +382,7 @@ const TaskCard = ({ task, index, onToggleCompletion, onSave, onDelete, onDeleteS
               subTaskIndex={subIndex}
               onSave={onSave}
               onDelete={onDeleteSubTask}
+              onToggleCompletion={onToggleSubTaskCompletion}
             />
           ))}
         </div>
@@ -342,7 +391,7 @@ const TaskCard = ({ task, index, onToggleCompletion, onSave, onDelete, onDeleteS
   );
 };
 
-const SubTaskCard = ({ subTask, mainTaskIndex, subTaskIndex, onSave, onDelete }) => {
+const SubTaskCard = ({ subTask, mainTaskIndex, subTaskIndex, onSave, onDelete, onToggleCompletion }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedSubTask, setEditedSubTask] = useState({ ...subTask });
 
@@ -376,10 +425,13 @@ const SubTaskCard = ({ subTask, mainTaskIndex, subTaskIndex, onSave, onDelete })
           <h4 className="text-md font-semibold">{subTask.name}</h4>
         )}
         <div className="flex items-center space-x-2">
+          <button onClick={() => onToggleCompletion(mainTaskIndex, subTaskIndex)}>
+            <FaCheck className={`text-green-500 ${subTask.progress === 100 ? 'line-through' : ''}`} />
+          </button>
           <button onClick={handleEditToggle}>
             <FaEdit className="text-blue-500" />
           </button>
-          <button onClick={() => onDelete(editedSubTask)}>
+          <button onClick={() => onDelete(mainTaskIndex, subTaskIndex)}>
             <FaTrash className="text-red-500" />
           </button>
         </div>
@@ -422,6 +474,58 @@ const SubTaskCard = ({ subTask, mainTaskIndex, subTaskIndex, onSave, onDelete })
           </div>
         </>
       )}
+    </div>
+  );
+};
+
+const SubTaskForm = ({ mainTask, onSave, onCancel }) => {
+  const [name, setName] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [progress, setProgress] = useState(0);
+
+  const handleSave = () => {
+    if (!name || !dueDate) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    const newSubTask = { name, dueDate, progress };
+    onSave(mainTask, newSubTask);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h3 className="text-xl font-semibold mb-4">Add Sub-task to {mainTask.name}</h3>
+        <input
+          type="text"
+          placeholder="Sub-task Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full mb-2 p-2 border rounded"
+        />
+        <input
+          type="date"
+          placeholder="Due Date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="w-full mb-2 p-2 border rounded"
+        />
+        <div className="flex justify-end space-x-4">
+          <button
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            onClick={handleSave}
+          >
+            Save
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
