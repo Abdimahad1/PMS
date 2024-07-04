@@ -32,3 +32,26 @@ body, html {
   overflow-y: auto;
 }
 
+
+/* src/index.css */
+body {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.bg-white {
+  background-color: #ffffff;
+}
+
+.bg-gray-800 {
+  background-color: #2d3748;
+}
+
+.text-black {
+  color: #000000;
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+

@@ -47,6 +47,72 @@ const Home = () => {
         { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
       ],
     },
+    {
+      name: 'Windows Development',
+      dueDate: '2024-07-31',
+      progress: 69,
+      bgColor: 'bg-green-200',
+      subTasks: [
+        { name: 'UI Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'API Integration', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
+      ],
+    },
+    {
+      name: 'Linux Development',
+      dueDate: '2024-07-31',
+      progress: 69,
+      bgColor: 'bg-gray-200',
+      subTasks: [
+        { name: 'UI Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'API Integration', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
+      ],
+    },
+    {
+      name: 'Apple Development',
+      dueDate: '2024-07-31',
+      progress: 69,
+      bgColor: 'bg-blue-200',
+      subTasks: [
+        { name: 'UI Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'API Integration', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
+      ],
+    },
+    {
+      name: 'Samsung Development',
+      dueDate: '2024-07-31',
+      progress: 69,
+      bgColor: 'bg-gray-200',
+      subTasks: [
+        { name: 'UI Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'API Integration', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
+      ],
+    },
+    {
+      name: 'Space Development',
+      dueDate: '2024-07-31',
+      progress: 69,
+      bgColor: 'bg-green-200',
+      subTasks: [
+        { name: 'UI Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'API Integration', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
+      ],
+    },
+    {
+      name: 'Ultra Development',
+      dueDate: '2024-07-31',
+      progress: 69,
+      bgColor: 'bg-blue-200',
+      subTasks: [
+        { name: 'UI Development', dueDate: '2024-07-15', progress: 0 },
+        { name: 'API Integration', dueDate: '2024-07-20', progress: 0 },
+        { name: 'Testing', dueDate: '2024-07-25', progress: 0 },
+      ],
+    },
     // Add more tasks here
   ];
 
@@ -211,11 +277,11 @@ const Home = () => {
       <ToastContainer />
       <header className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">Hi, Abdimahad 👋</h1>
+          <h1 className="text-2xl font-bold text-white">Hi, Abdimahad 👋</h1>
           <p className="text-gray-500">{currentDate}</p>
         </div>
         <div className="relative">
-          <FaSearch className="absolute top-2 left-3 text-gray-400" />
+          <FaSearch className="absolute top-2 left-3 text-black-400" />
           <input
             type="text"
             placeholder="Search project"
