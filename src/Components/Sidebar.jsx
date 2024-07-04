@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { FaHome, FaTasks, FaBell, FaProjectDiagram, FaCog, FaUserCircle, FaSignOutAlt, FaCalendarAlt } from 'react-icons/fa';
+import { FaHome, FaTasks, FaBell, FaProjectDiagram, FaCog, FaUserCircle, FaSignOutAlt, FaCalendarAlt, FaSun, FaMoon, FaLeaf, FaTint, FaRegCircle, FaFireAlt } from 'react-icons/fa';
+import { ThemeContext } from '../Context/ThemeContext'; // Import ThemeContext
 
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
+    const { theme, changeTheme } = useContext(ThemeContext); // Use ThemeContext
+    const [showSettings, setShowSettings] = useState(false);
 
     const menuItems = [
         { name: 'Home', icon: FaHome, route: '/' },
@@ -15,7 +18,7 @@ const Sidebar = () => {
     ];
 
     return (
-        <div className={`h-screen flex flex-col ${collapsed ? 'w-20' : 'w-64'} bg-blue-900 text-white transition-all duration-300 fixed md:relative`}>
+        <div className={`h-screen flex flex-col ${collapsed ? 'w-20' : 'w-64'} ${theme.sidebar} text-white transition-all duration-300 fixed md:relative`}>
             <div className="p-4 flex justify-between items-center border-b border-blue-700">
                 <span className="text-xl font-semibold">{!collapsed && 'Facenote'}</span>
                 <button onClick={() => setCollapsed(!collapsed)} className="focus:outline-none">
@@ -54,6 +57,17 @@ const Sidebar = () => {
                     {!collapsed && <span>Log Out</span>}
                 </Link>
             </div>
+            {showSettings && (
+                <div className="mt-4">
+                    <p className="text-white mb-2">Select Theme:</p>
+                    <button onClick={() => changeTheme('light')} className="text-white flex items-center mb-2"><FaSun className="mr-2" /> Light</button>
+                    <button onClick={() => changeTheme('dark')} className="text-white flex items-center mb-2"><FaMoon className="mr-2" /> Dark</button>
+                    <button onClick={() => changeTheme('green')} className="text-white flex items-center mb-2"><FaLeaf className="mr-2" /> Green</button>
+                    <button onClick={() => changeTheme('blue')} className="text-white flex items-center mb-2"><FaTint className="mr-2" /> Blue</button>
+                    <button onClick={() => changeTheme('gray')} className="text-white flex items-center mb-2"><FaRegCircle className="mr-2" /> Gray</button>
+                    <button onClick={() => changeTheme('red')} className="text-white flex items-center mb-2"><FaFireAlt className="mr-2" /> Red</button>
+                </div>
+            )}
         </div>
     );
 };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ThemeContext } from '../Context/ThemeContext';
 import { FaSearch, FaEllipsisV, FaCheck, FaTrash, FaPlus, FaEdit } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -57,7 +58,11 @@ const Home = () => {
   const handleTaskCompletionToggle = (index) => {
     const updatedTasks = tasks.map((task, idx) => {
       if (idx === index) {
-        return { ...task, progress: task.progress === 100 ? 0 : 100 };
+        const updatedSubTasks = task.subTasks.map(subTask => ({
+          ...subTask,
+          progress: task.progress === 100 ? 0 : 100,
+        }));
+        return { ...task, progress: task.progress === 100 ? 0 : 100, subTasks: updatedSubTasks };
       }
       return task;
     });
@@ -201,51 +206,54 @@ const Home = () => {
   }, tasks.length);
 
   return (
-    <div className="p-6 space-y-6 overflow-auto">
+    <div className="main-content p-6 space-y-6 overflow-auto">
       <ToastContainer />
       <header className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Hi, Abdimahad 👋</h1>
           <p className="text-gray-500">{currentDate}</p>
         </div>
-        <div className="flex space-x-4">
-          <div className="relative">
-            <FaSearch className="absolute top-2 left-3 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search project"
-              className="pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-sm hover:bg-blue-600 transition duration-300"
-            onClick={handleAddMainTask}
-          >
-            <FaPlus className="mr-2" /> Add Main Task
-          </button>
+        <div className="relative">
+          <FaSearch className="absolute top-2 left-3 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search project"
+            className="pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </header>
-      <section className="flex justify-around bg-white p-4 rounded-lg shadow-md">
-        <div className="text-center">
-          <p className="text-xl font-bold">{inProgressCount}</p>
-          <p className="text-gray-500">In Progress</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xl font-bold">{upcomingCount}</p>
-          <p className="text-gray-500">Upcoming</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xl font-bold">{doneCount}</p>
-          <p className="text-gray-500">Done</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xl font-bold">{totalCount}</p>
-          <p className="text-gray-500">Total Projects</p>
-        </div>
-      </section>
-      <section className="grid grid-cols-3 gap-4">
+
+ <section className="flex justify-around items-center bg-white p-4 rounded-lg shadow-md">
+       <div className="text-center">
+       <p className="text-xl font-bold">{inProgressCount}</p>
+       <p className="text-gray-500">In Progress</p>
+  </div>
+     <div className="text-center">
+    <p className="text-xl font-bold">{upcomingCount}</p>
+    <p className="text-gray-500">Upcoming</p>
+    </div>
+    <div className="text-center">
+    <p className="text-xl font-bold">{doneCount}</p>
+    <p className="text-gray-500">Done</p>
+  </div>
+  <div className="text-center relative">
+    <p className="text-xl font-bold">{totalCount}</p>
+    <p className="text-gray-500 ml-2">Total Projects</p>
+  </div>
+
+  <div className="text-center relative">
+    <button
+      className="ml-2 text-green-500 hover:text-green-700"
+      onClick={handleAddMainTask}
+    >
+      <FaPlus />
+    </button>
+  </div>
+</section>
+
+      <section className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
         {filteredTasks.map((task, index) => (
           <TaskCard
             key={index}
@@ -265,6 +273,12 @@ const Home = () => {
           mainTask={selectedMainTask}
           onSave={handleSaveSubTask}
           onCancel={() => setIsAddingSubTask(false)}
+        />
+      )}
+      {isAddingTask && (
+        <TaskForm
+          onSave={handleAddTask}
+          onCancel={() => setIsAddingTask(false)}
         />
       )}
     </div>
@@ -500,6 +514,57 @@ const SubTaskForm = ({ mainTask, onSave, onCancel }) => {
         <input
           type="text"
           placeholder="Sub-task Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full mb-2 p-2 border rounded"
+        />
+        <input
+          type="date"
+          placeholder="Due Date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="w-full mb-2 p-2 border rounded"
+        />
+        <div className="flex justify-end space-x-4">
+          <button
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            onClick={handleSave}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TaskForm = ({ onSave, onCancel }) => {
+  const [name, setName] = useState('');
+  const [dueDate, setDueDate] = useState('');
+
+  const handleSave = () => {
+    if (!name || !dueDate) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    const newTask = { name, dueDate, progress: 0, subTasks: [], bgColor: 'bg-gray-200' };
+    onSave(newTask);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h3 className="text-xl font-semibold mb-4">Add New Task</h3>
+        <input
+          type="text"
+          placeholder="Task Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full mb-2 p-2 border rounded"
