@@ -14,7 +14,6 @@ const Sidebar = () => {
         { name: 'Notifications', icon: FaBell, route: '/notifications' },
         { name: 'Projects', icon: FaProjectDiagram, route: '/projects' },
         { name: 'Calendar', icon: FaCalendarAlt, route: '/calendar' }, // Added Calendar item
-        { name: 'Settings', icon: FaCog, route: '/settings' } // Settings item is now the last
     ];
 
     return (
@@ -50,6 +49,21 @@ const Sidebar = () => {
                         )}
                     </div>
                 ))}
+                <div className="flex items-center p-2 hover:bg-blue-700 cursor-pointer" onClick={() => setShowSettings(!showSettings)}>
+                    <FaCog className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
+                    {!collapsed && <span>Settings</span>}
+                </div>
+                {showSettings && (
+                    <div className="mt-4">
+                        <p className="text-white mb-2">Select Theme:</p>
+                        <button onClick={() => changeTheme('light')} className="text-white flex items-center mb-2"><FaSun className="mr-2" /> Light</button>
+                        <button onClick={() => changeTheme('dark')} className="text-white flex items-center mb-2"><FaMoon className="mr-2" /> Dark</button>
+                        <button onClick={() => changeTheme('green')} className="text-white flex items-center mb-2"><FaLeaf className="mr-2" /> Green</button>
+                        <button onClick={() => changeTheme('blue')} className="text-white flex items-center mb-2"><FaTint className="mr-2" /> Blue</button>
+                        <button onClick={() => changeTheme('gray')} className="text-white flex items-center mb-2"><FaRegCircle className="mr-2" /> Gray</button>
+                        <button onClick={() => changeTheme('red')} className="text-white flex items-center mb-2"><FaFireAlt className="mr-2" /> Red</button>
+                    </div>
+                )}
             </div>
             <div className="p-2 border-t border-blue-700">
                 <Link to="/logout" className="flex items-center p-2 hover:bg-blue-700">
@@ -57,17 +71,6 @@ const Sidebar = () => {
                     {!collapsed && <span>Log Out</span>}
                 </Link>
             </div>
-            {showSettings && (
-                <div className="mt-4">
-                    <p className="text-white mb-2">Select Theme:</p>
-                    <button onClick={() => changeTheme('light')} className="text-white flex items-center mb-2"><FaSun className="mr-2" /> Light</button>
-                    <button onClick={() => changeTheme('dark')} className="text-white flex items-center mb-2"><FaMoon className="mr-2" /> Dark</button>
-                    <button onClick={() => changeTheme('green')} className="text-white flex items-center mb-2"><FaLeaf className="mr-2" /> Green</button>
-                    <button onClick={() => changeTheme('blue')} className="text-white flex items-center mb-2"><FaTint className="mr-2" /> Blue</button>
-                    <button onClick={() => changeTheme('gray')} className="text-white flex items-center mb-2"><FaRegCircle className="mr-2" /> Gray</button>
-                    <button onClick={() => changeTheme('red')} className="text-white flex items-center mb-2"><FaFireAlt className="mr-2" /> Red</button>
-                </div>
-            )}
         </div>
     );
 };

@@ -4,7 +4,6 @@ import Home from './pages/Home';
 import Tasks from './pages/Tasks';
 import Notifications from './pages/Notifications';
 import Projects from './pages/Projects';
-import Settings from './pages/Settings';
 import { ThemeProvider } from './Context/ThemeContext';
 
 function App() {
@@ -19,7 +18,6 @@ function App() {
                             <Route path="/tasks" element={<Tasks />} />
                             <Route path="/notifications" element={<Notifications />} />
                             <Route path="/projects" element={<Projects />} />
-                            <Route path="/settings" element={<Settings />} />
                         </Routes>
                     </div>
                 </div>

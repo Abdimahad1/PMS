@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { ThemeContext } from '../Context/ThemeContext';
 import { FaSearch, FaEllipsisV, FaCheck, FaTrash, FaPlus, FaEdit } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Home = () => {
+  const { theme } = useContext(ThemeContext); // Use ThemeContext
   const currentDate = new Date().toLocaleDateString('en-GB', {
     weekday: 'long',
     day: 'numeric',
@@ -206,7 +207,7 @@ const Home = () => {
   }, tasks.length);
 
   return (
-    <div className="main-content p-6 space-y-6 overflow-auto">
+    <div className={`main-content p-6 space-y-6 overflow-auto ${theme.background} ${theme.text}`}>
       <ToastContainer />
       <header className="flex justify-between items-center">
         <div>
@@ -225,33 +226,33 @@ const Home = () => {
         </div>
       </header>
 
- <section className="flex justify-around items-center bg-white p-4 rounded-lg shadow-md">
-       <div className="text-center">
-       <p className="text-xl font-bold">{inProgressCount}</p>
-       <p className="text-gray-500">In Progress</p>
-  </div>
-     <div className="text-center">
-    <p className="text-xl font-bold">{upcomingCount}</p>
-    <p className="text-gray-500">Upcoming</p>
-    </div>
-    <div className="text-center">
-    <p className="text-xl font-bold">{doneCount}</p>
-    <p className="text-gray-500">Done</p>
-  </div>
-  <div className="text-center relative">
-    <p className="text-xl font-bold">{totalCount}</p>
-    <p className="text-gray-500 ml-2">Total Projects</p>
-  </div>
+      <section className="flex justify-around items-center bg-white p-4 rounded-lg shadow-md">
+        <div className="text-center">
+          <p className="text-xl font-bold">{inProgressCount}</p>
+          <p className="text-gray-500">In Progress</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xl font-bold">{upcomingCount}</p>
+          <p className="text-gray-500">Upcoming</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xl font-bold">{doneCount}</p>
+          <p className="text-gray-500">Done</p>
+        </div>
+        <div className="text-center relative">
+          <p className="text-xl font-bold">{totalCount}</p>
+          <p className="text-gray-500 ml-2">Total Projects</p>
+        </div>
 
-  <div className="text-center relative">
-    <button
-      className="ml-2 text-green-500 hover:text-green-700"
-      onClick={handleAddMainTask}
-    >
-      <FaPlus />
-    </button>
-  </div>
-</section>
+        <div className="text-center relative">
+          <button
+            className="ml-2 text-green-500 hover:text-green-700"
+            onClick={handleAddMainTask}
+          >
+            <FaPlus />
+          </button>
+        </div>
+      </section>
 
       <section className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
         {filteredTasks.map((task, index) => (
