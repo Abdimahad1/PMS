@@ -47,8 +47,8 @@ const Support = () => {
   return (
     <div className={`support-container ${theme.background} ${theme.text}`}>
       <div className="support-header bg-cover bg-center h-64 flex flex-col justify-center items-center text-black" style={{ backgroundImage: "url('/path/to/your/image.jpg')" }}>
-        <h1 className="text-4xl font-bold text-white">Welcome to PM System Support</h1>
-        <p className="text-xl mt-2 text-white">We're here to help</p>
+        <h1 className="text-4xl font-bold text-black">Welcome to PM System Support</h1>
+        <p className="text-xl mt-2 text-black">We're here to help</p>
         
       </div>
       <div className={`support-services py-8 relative ${theme.background} ${theme.text}`}>

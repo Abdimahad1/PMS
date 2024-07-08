@@ -4,7 +4,7 @@ import { FaSearch, FaEllipsisV, FaCheck, FaTrash, FaPlus, FaEdit } from 'react-i
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Home = () => {
+const Home = ({ user }) => {
   const { theme } = useContext(ThemeContext); // Use ThemeContext
   const currentDate = new Date().toLocaleDateString('en-GB', {
     weekday: 'long',
@@ -12,6 +12,7 @@ const Home = () => {
     month: 'long',
     year: 'numeric',
   });
+  
 
   const initialTasks = [
     {
@@ -200,6 +201,7 @@ const Home = () => {
     setTasks(updatedTasks);
     toast.dismiss();
   };
+  
 
   const handleSaveTask = (updatedTask, index, subTaskIndex = null) => {
     const updatedTasks = tasks.map((task, idx) => {
@@ -275,22 +277,22 @@ const Home = () => {
   return (
     <div className={`main-content p-6 space-y-6 overflow-auto ${theme.background} ${theme.text}`}>
       <ToastContainer />
-      <header className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Hi, Abdimahad 👋</h1>
-          <p className="text-gray-500">{currentDate}</p>
-        </div>
-        <div className="relative">
-          <FaSearch className="absolute top-2 left-3 text-black-400" />
-          <input
-            type="text"
-            placeholder="Search project"
-            className="pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </header>
+            <header className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold text-white">Hi, {user.name} 👋</h1>
+                    <p className="text-gray-500">{currentDate}</p>
+                </div>
+                <div className="relative">
+                    <FaSearch className="absolute top-2 left-3 text-black-400" />
+                    <input
+                        type="text"
+                        placeholder="Search project"
+                        className="pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+            </header>
 
       <section className="flex justify-around items-center bg-white p-4 rounded-lg shadow-md">
         <div className="text-center">

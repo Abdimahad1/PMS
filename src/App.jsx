@@ -1,6 +1,4 @@
-// src/App.js
-
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Sidebar from './Components/Sidebar';
 import Home from './pages/Home';
@@ -10,10 +8,14 @@ import CustomCalendar from './Components/CustomCalendar';
 import { ThemeProvider, ThemeContext } from './Context/ThemeContext';
 import ProjectsPopup from './Components/ProjectsPopup';
 import SettingsPopup from './Components/SettingsPopup';
+import SignUp from './Components/SignUp';
+import Login from './Components/Login';
+import { toast } from 'react-toastify';
 
 function App() {
     const [showProjectsPopup, setShowProjectsPopup] = useState(false);
     const [showSettingsPopup, setShowSettingsPopup] = useState(false);
+    const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('loggedInUser')) || null);
 
     const handleProjectsClick = () => {
         setShowProjectsPopup(true);
@@ -28,6 +30,24 @@ function App() {
     const handleClosePopup = () => {
         setShowProjectsPopup(false);
         setShowSettingsPopup(false);
+    };
+
+    const handleLogout = () => {
+        toast.info(
+            <div>
+                <p>Are you sure you want to log out?</p>
+                <button
+                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
+                    onClick={() => {
+                        sessionStorage.removeItem('loggedInUser');
+                        setUser(null);
+                        toast.dismiss();
+                    }}
+                >
+                    Confirm
+                </button>
+            </div>
+        );
     };
 
     useEffect(() => {
@@ -46,13 +66,15 @@ function App() {
         <ThemeProvider>
             <Router>
                 <div className="flex">
-                    <Sidebar onProjectsClick={handleProjectsClick} onSettingsClick={handleSettingsClick} />
-                    <div className="flex-1 p-6 ml-20 md:ml-0">
+                    {user && <Sidebar user={user} onProjectsClick={handleProjectsClick} onSettingsClick={handleSettingsClick} />}
+                    <div className={`flex-1 p-6 ${user ? 'ml-20 md:ml-0' : ''}`}>
                         <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/team-members" element={<TeamMembers />} />
-                            <Route path="/support" element={<Support />} />
-                            <Route path="/custom-calendar" element={<CustomCalendar />} />
+                            <Route path="/signup" element={<SignUp />} />
+                            <Route path="/login" element={<Login setUser={setUser} />} />
+                            <Route path="/" element={user ? <Home user={user} /> : <Navigate to="/login" />} />
+                            <Route path="/team-members" element={user ? <TeamMembers /> : <Navigate to="/login" />} />
+                            <Route path="/support" element={user ? <Support /> : <Navigate to="/login" />} />
+                            <Route path="/custom-calendar" element={user ? <CustomCalendar /> : <Navigate to="/login" />} />
                         </Routes>
                     </div>
                     {showProjectsPopup && <ProjectsPopup onClose={handleClosePopup} />}

@@ -1,13 +1,30 @@
-// src/Components/Sidebar.js
-
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { FaHome, FaProjectDiagram, FaCog, FaUserCircle, FaSignOutAlt, FaCalendarAlt } from 'react-icons/fa';
 import { ThemeContext } from '../Context/ThemeContext';
+import { toast } from 'react-toastify';
 
-const Sidebar = ({ onSettingsClick, onProjectsClick }) => {
+const Sidebar = ({ user, onSettingsClick, onProjectsClick }) => {
     const [collapsed, setCollapsed] = useState(false);
     const { theme } = useContext(ThemeContext);
+
+    const handleLogoutClick = () => {
+        toast.info(
+            <div>
+                <p>Are you sure you want to log out?</p>
+                <button
+                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
+                    onClick={() => {
+                        sessionStorage.removeItem('loggedInUser');
+                        window.location.href = '/login'; // Redirect to login after logout
+                        toast.dismiss();
+                    }}
+                >
+                    Confirm
+                </button>
+            </div>
+        );
+    };
 
     const menuItems = [
         { name: 'Home', icon: FaHome, route: '/' },
@@ -17,8 +34,8 @@ const Sidebar = ({ onSettingsClick, onProjectsClick }) => {
     ];
 
     return (
-        <div className={`h-screen flex flex-col ${collapsed ? 'w-20' : 'w-64'} ${theme.sidebar} text-white transition-all duration-300 fixed md:relative`}>
-            <div className="p-4 flex justify-between items-center border-b border-blue-700">
+        <div className={`h-screen flex flex-col ${collapsed ? 'w-20' : 'w-64'} ${theme.sidebar} transition-all duration-300 fixed md:relative`}>
+            <div className={`p-4 flex justify-between items-center border-b ${theme.borderColor}`}>
                 <span className="text-xl font-semibold">{!collapsed && 'PM-SYSTEM'}</span>
                 <button onClick={() => setCollapsed(!collapsed)} className="focus:outline-none">
                     <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -30,39 +47,39 @@ const Sidebar = ({ onSettingsClick, onProjectsClick }) => {
                     </svg>
                 </button>
             </div>
-            <div className="mt-4 flex items-center p-2 border-b border-blue-700">
+            <div className={`mt-4 flex items-center p-2 border-b ${theme.borderColor}`}>
                 <FaUserCircle className="h-10 w-10 mr-2" />
                 {!collapsed && <div>
-                    <p className="text-lg font-semibold">ABDIMAHAD</p>
-                    <p className="text-sm">abdi123@gmail.comt</p>
+                    <p className="text-lg font-semibold">{user.name}</p>
+                    <p className="text-sm">{user.email}</p>
                 </div>}
             </div>
             <div className="mt-4 flex-1">
                 {menuItems.map((item, index) => (
                     <div key={index}>
-                        <Link to={item.route} className="flex items-center p-2 hover:bg-blue-700">
+                        <Link to={item.route} className={`flex items-center p-2 hover:${theme.hoverBgColor}`}>
                             <item.icon className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
                             {!collapsed && <span>{item.name}</span>}
                         </Link>
                         {index % 2 === 1 && index < menuItems.length - 1 && (
-                            <div className="border-t border-blue-700 my-2"></div>
+                            <div className={`border-t my-2 ${theme.borderColor}`}></div>
                         )}
                     </div>
                 ))}
-                <div className="flex items-center p-2 hover:bg-blue-700 cursor-pointer" onClick={(e) => { e.stopPropagation(); onProjectsClick(); }}>
+                <div className={`flex items-center p-2 hover:${theme.hoverBgColor} cursor-pointer`} onClick={(e) => { e.stopPropagation(); onProjectsClick(); }}>
                     <FaProjectDiagram className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
                     {!collapsed && <span>Projects</span>}
                 </div>
-                <div className="flex items-center p-2 hover:bg-blue-700 cursor-pointer" onClick={(e) => { e.stopPropagation(); onSettingsClick(); }}>
+                <div className={`flex items-center p-2 hover:${theme.hoverBgColor} cursor-pointer`} onClick={(e) => { e.stopPropagation(); onSettingsClick(); }}>
                     <FaCog className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
                     {!collapsed && <span>Settings</span>}
                 </div>
             </div>
-            <div className="p-2 border-t border-blue-700">
-                <Link to="/logout" className="flex items-center p-2 hover:bg-blue-700">
+            <div className={`p-2 border-t ${theme.borderColor}`}>
+                <div className={`flex items-center p-2 hover:${theme.hoverBgColor} cursor-pointer`} onClick={handleLogoutClick}>
                     <FaSignOutAlt className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
                     {!collapsed && <span>Log Out</span>}
-                </Link>
+                </div>
             </div>
         </div>
     );

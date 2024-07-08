@@ -17,10 +17,21 @@ const SettingsPopup = ({ onClose }) => {
                 <h1 className="text-2xl font-bold mb-4">Settings</h1>
                 <div>
                     <p className="text-black mb-2">Select Theme:</p>
-                    <button onClick={() => changeTheme('dark')} className="text-black flex items-center mb-2"><FaMoon className="mr-2" /> Dark</button>
-                    <button onClick={() => changeTheme('green')} className="text-black flex items-center mb-2"><FaLeaf className="mr-2" /> Green</button>
-                    <button onClick={() => changeTheme('blue')} className="text-black flex items-center mb-2"><FaTint className="mr-2" /> Blue</button>
-                    <button onClick={() => changeTheme('red')} className="text-black flex items-center mb-2"><FaFireAlt className="mr-2" /> Red</button>
+                    <button onClick={() => changeTheme('dark')} className="text-black flex items-center mb-2">
+                        <FaMoon className="mr-2" /> Dark
+                    </button>
+                    <button onClick={() => changeTheme('green')} className="text-black flex items-center mb-2">
+                        <FaLeaf className="mr-2" /> Green
+                    </button>
+                    <button onClick={() => changeTheme('blue')} className="text-black flex items-center mb-2">
+                        <FaTint className="mr-2" /> Blue
+                    </button>
+                    <button onClick={() => changeTheme('red')} className="text-black flex items-center mb-2">
+                        <FaFireAlt className="mr-2" /> Red
+                    </button>
+                    <button onClick={() => changeTheme('light')} className="text-black flex items-center mb-2">
+                        <FaSun className="mr-2" /> Light
+                    </button>
                 </div>
                 <button
                     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
