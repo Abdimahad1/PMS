@@ -48,36 +48,33 @@ const Support = () => {
 
     return (
         <div className={`support-container ${theme.background} ${theme.text}`}>
-            {/* Header with background image */}
             <div className="support-header bg-cover bg-center h-64 flex flex-col justify-center items-center text-black" style={{ backgroundImage: "url('/path/to/your/image.jpg')" }}>
-                <h1 className="text-4xl font-bold text-black">Welcome to PM System Support</h1>
-                <p className="text-xl mt-2 text-black">We're here to help</p>
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-black text-center">Welcome to PM System Support</h1>
+                <p className="text-lg md:text-xl mt-2 text-black text-center">We're here to help</p>
             </div>
 
-            {/* Services section with navigation */}
             <div className={`support-services py-8 relative ${theme.background} ${theme.text}`}>
                 <button onClick={handlePrev} className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 p-2 rounded-full">
-                    <FaArrowLeft className="text-2xl text-white" />
+                    <FaArrowLeft className="text-xl md:text-2xl text-white" />
                 </button>
-                <div className="flex justify-center space-x-8 overflow-hidden w-full">
+                <div className="flex justify-center space-x-4 md:space-x-8 overflow-hidden w-full px-4">
                     {filteredServices.slice(currentIndex, currentIndex + 5).map(service => (
-                        <NavLink to={service.link} key={service.name} className="flex flex-col items-center">
+                        <NavLink to={service.link} key={service.name} className="flex flex-col items-center text-center">
                             {service.icon}
-                            <span>{service.name}</span>
+                            <span className="text-sm md:text-base">{service.name}</span>
                         </NavLink>
                     ))}
                 </div>
                 <button onClick={handleNext} className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 p-2 rounded-full">
-                    <FaArrowRight className="text-2xl text-white" />
+                    <FaArrowRight className="text-xl md:text-2xl text-white" />
                 </button>
             </div>
 
-            {/* Content section with support videos and topics */}
             <div className={`support-content py-8 ${theme.background} ${theme.text}`}>
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <h2 className="text-2xl font-bold mb-4">Popular Support Videos</h2>
+                            <h2 className="text-xl md:text-2xl font-bold mb-4">Popular Support Videos</h2>
                             <ul className="list-disc list-inside">
                                 <li>Install the PM System on your PC</li>
                                 <li>Fix sync issues between third-party tools</li>
@@ -87,7 +84,7 @@ const Support = () => {
                             </ul>
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold mb-4">Popular Support Topics</h2>
+                            <h2 className="text-xl md:text-2xl font-bold mb-4">Popular Support Topics</h2>
                             <ul className="list-disc list-inside">
                                 <li>PM System FAQs</li>
                                 <li>Common issues and solutions</li>

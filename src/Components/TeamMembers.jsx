@@ -48,10 +48,10 @@ const TeamMembers = () => {
   ];
 
   return (
-    <div className={`team-members-container ${theme.background} ${theme.text}`}>
-      <h2 className="text-3xl font-bold text-center mb-6 text-white">Who We Are? Meet Our Team!</h2>
+    <div className={`team-members-container ${theme.background} ${theme.text} py-8 px-4`}>
+      <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-6 text-white">Who We Are? Meet Our Team!</h2>
       <p className="text-center mb-8 text-white">We listen, we discuss, we advise and develop. We love to learn and use the latest technologies.</p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {teamMembers.map((member, index) => (
           <div
             key={index}

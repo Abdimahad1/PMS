@@ -13,9 +13,8 @@ const Home = ({ user }) => {
     year: 'numeric',
   });
 
-  // Initial task data with some pre-defined tasks and sub-tasks
   const initialTasks = [
-    // Example task
+    // Example tasks
     {
       name: 'Web Development',
       dueDate: '2024-07-31',
@@ -123,7 +122,6 @@ const Home = ({ user }) => {
   const [selectedMainTask, setSelectedMainTask] = useState(null); // State to track selected main task
   const [isAddingSubTask, setIsAddingSubTask] = useState(false); // State to toggle sub-task addition
 
-  // Toggle task completion status
   const handleTaskCompletionToggle = (index) => {
     const updatedTasks = tasks.map((task, idx) => {
       if (idx === index) {
@@ -138,7 +136,6 @@ const Home = ({ user }) => {
     setTasks(updatedTasks);
   };
 
-  // Toggle sub-task completion status
   const handleSubTaskCompletionToggle = (mainTaskIndex, subTaskIndex) => {
     const updatedTasks = tasks.map((task, idx) => {
       if (idx === mainTaskIndex) {
@@ -155,7 +152,6 @@ const Home = ({ user }) => {
     setTasks(updatedTasks);
   };
 
-  // Handle task deletion with confirmation
   const handleDeleteTask = (task) => {
     toast.warning(
       <div>
@@ -177,7 +173,6 @@ const Home = ({ user }) => {
     toast.dismiss();
   };
 
-  // Handle sub-task deletion with confirmation
   const handleDeleteSubTask = (mainTaskIndex, subTaskIndex) => {
     toast.warning(
       <div>
@@ -206,7 +201,6 @@ const Home = ({ user }) => {
     toast.dismiss();
   };
 
-  // Handle task saving/updating
   const handleSaveTask = (updatedTask, index, subTaskIndex = null) => {
     const updatedTasks = tasks.map((task, idx) => {
       if (idx === index) {
@@ -228,7 +222,6 @@ const Home = ({ user }) => {
     toast.success("Task updated successfully!");
   };
 
-  // Handle adding new main task
   const handleAddMainTask = () => {
     setIsAddingTask(true);
   };
@@ -239,7 +232,6 @@ const Home = ({ user }) => {
     setIsAddingTask(false);
   };
 
-  // Handle adding new sub-task
   const handleAddSubTask = (mainTask) => {
     setSelectedMainTask(mainTask);
     setIsAddingSubTask(true);
@@ -260,12 +252,10 @@ const Home = ({ user }) => {
     toast.success("Sub-task added successfully!");
   };
 
-  // Filter tasks based on search term
   const filteredTasks = tasks.filter(task =>
     task.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Task counts for different statuses
   const inProgressCount = tasks.reduce((count, task) => {
     return count + task.subTasks.filter(subTask => subTask.progress > 0 && subTask.progress < 100).length;
   }, tasks.filter(task => task.progress > 0 && task.progress < 100).length);
@@ -285,37 +275,37 @@ const Home = ({ user }) => {
   return (
     <div className={`main-content p-6 space-y-6 overflow-auto ${theme.background} ${theme.text}`}>
       <ToastContainer />
-      <header className="flex justify-between items-center">
+      <header className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
         <div>
           <h1 className="text-2xl font-bold text-white">Hi, Welcome {user.name} 👋</h1>
           <p className="text-gray-500">{currentDate}</p>
         </div>
-        <div className="relative">
+        <div className="relative w-full md:w-auto">
           <FaSearch className="absolute top-2 left-3 text-black-400" />
           <input
             type="text"
             placeholder="Search project"
-            className="pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full md:w-auto pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </header>
 
-      <section className="flex justify-around items-center bg-white p-4 rounded-lg shadow-md">
-        <div className="text-center">
+      <section className="flex flex-col md:flex-row justify-around items-center bg-white p-4 rounded-lg shadow-md">
+        <div className="text-center mb-4 md:mb-0">
           <p className="text-xl font-bold">{inProgressCount}</p>
           <p className="text-gray-500">In Progress</p>
         </div>
-        <div className="text-center">
+        <div className="text-center mb-4 md:mb-0">
           <p className="text-xl font-bold">{upcomingCount}</p>
           <p className="text-gray-500">Upcoming</p>
         </div>
-        <div className="text-center">
+        <div className="text-center mb-4 md:mb-0">
           <p className="text-xl font-bold">{doneCount}</p>
           <p className="text-gray-500">Done</p>
         </div>
-        <div className="text-center relative">
+        <div className="text-center mb-4 md:mb-0 relative">
           <p className="text-xl font-bold">{totalCount}</p>
           <p className="text-gray-500 ml-2">Total Projects</p>
         </div>
@@ -329,7 +319,7 @@ const Home = ({ user }) => {
         </div>
       </section>
 
-      <section className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
         {filteredTasks.map((task, index) => (
           <TaskCard
             key={index}
@@ -361,7 +351,6 @@ const Home = ({ user }) => {
   );
 };
 
-// TaskCard component to display individual tasks
 const TaskCard = ({ task, index, onToggleCompletion, onSave, onDelete, onDeleteSubTask, onAddSubTask, onToggleSubTaskCompletion }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState({ ...task });
@@ -482,7 +471,6 @@ const TaskCard = ({ task, index, onToggleCompletion, onSave, onDelete, onDeleteS
   );
 };
 
-// SubTaskCard component to display individual sub-tasks
 const SubTaskCard = ({ subTask, mainTaskIndex, subTaskIndex, onSave, onDelete, onToggleCompletion }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedSubTask, setEditedSubTask] = useState({ ...subTask });
@@ -570,7 +558,6 @@ const SubTaskCard = ({ subTask, mainTaskIndex, subTaskIndex, onSave, onDelete, o
   );
 };
 
-// SubTaskForm component for adding new sub-tasks
 const SubTaskForm = ({ mainTask, onSave, onCancel }) => {
   const [name, setName] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -623,7 +610,6 @@ const SubTaskForm = ({ mainTask, onSave, onCancel }) => {
   );
 };
 
-// TaskForm component for adding new tasks
 const TaskForm = ({ onSave, onCancel }) => {
   const [name, setName] = useState('');
   const [dueDate, setDueDate] = useState('');

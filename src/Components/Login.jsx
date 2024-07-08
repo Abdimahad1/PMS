@@ -4,50 +4,36 @@ import { toast } from 'react-toastify';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = ({ setUser }) => {
-    // State hooks for managing email, password, and password visibility
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     
-    // Hook for navigation
     const navigate = useNavigate();
 
-    // Function to handle login logic
     const handleLogin = () => {
-        // Check if email and password fields are filled
         if (!email || !password) {
             toast.error('Please fill out all fields!');
             return;
         }
 
-        // Get Firebase Auth instance
         const auth = getAuth();
         
-        // Sign in using Firebase authentication
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                // Get the user data from the credential
                 const user = userCredential.user;
-                
-                // Set the user in state
                 setUser(user);
-                
-                // Save user info in session storage
                 sessionStorage.setItem('loggedInUser', JSON.stringify(user));
-                
-                // Navigate to the home page
                 navigate('/home');
             })
             .catch((error) => {
-                // Show error toast if login fails
                 toast.error('Incorrect email or password!');
             });
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-            <div className="w-full max-w-md">
-                <h1 className="text-2xl font-bold mb-4">Log In</h1>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-4">
+            <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-center">Log In</h1>
                 <form className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <div className="mb-4">
                         <label className="block text-sm font-bold mb-2" htmlFor="email">

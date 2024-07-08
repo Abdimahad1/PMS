@@ -15,19 +15,15 @@ const SignUp = () => {
     const navigate = useNavigate();
 
     const handleSignUp = () => {
-        // Check if all fields are filled
         if (!firstName || !lastName || !email || !password || !confirmPassword) {
             toast.error('Please fill out all fields!');
             return;
         }
 
-        // Check if passwords match
         if (password === confirmPassword) {
-            // Create a new user with email and password
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    // Update the user's profile with the display name
                     updateProfile(user, {
                         displayName: `${firstName} ${lastName}`
                     }).then(() => {
@@ -46,12 +42,12 @@ const SignUp = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-            <div className="w-full max-w-md">
-                <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-4">
+            <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-center">Sign Up</h1>
                 <form className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                    <div className="flex mb-4">
-                        <div className="mr-2 w-1/2">
+                    <div className="flex flex-col sm:flex-row mb-4">
+                        <div className="sm:mr-2 sm:w-1/2">
                             <label className="block text-sm font-bold mb-2" htmlFor="firstName">
                                 First Name
                             </label>
@@ -64,7 +60,7 @@ const SignUp = () => {
                                 onChange={(e) => setFirstName(e.target.value)}
                             />
                         </div>
-                        <div className="ml-2 w-1/2">
+                        <div className="sm:ml-2 sm:w-1/2 mt-4 sm:mt-0">
                             <label className="block text-sm font-bold mb-2" htmlFor="lastName">
                                 Last Name
                             </label>
