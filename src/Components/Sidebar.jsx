@@ -5,7 +5,7 @@ import { ThemeContext } from '../Context/ThemeContext';
 import { toast } from 'react-toastify';
 
 const Sidebar = ({ user, onSettingsClick, onProjectsClick, onLogout }) => {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const { theme } = useContext(ThemeContext);
 
     const handleLogoutClick = () => {
