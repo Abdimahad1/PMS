@@ -1,7 +1,8 @@
-// src/firebase.js
+// Import necessary functions from Firebase SDKs
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
+// Firebase configuration object containing all necessary keys and identifiers
 const firebaseConfig = {
   apiKey: "AIzaSyA_hCmYVHQd49fm3tfZkdmti3mg63Fe1IQ",
   authDomain: "pm-systemdb.firebaseapp.com",
@@ -12,6 +13,8 @@ const firebaseConfig = {
   measurementId: "G-DQ7K3VWZ16"
 };
 
-// Initialize Firebase
+// Initialize Firebase with the provided configuration
 const app = initializeApp(firebaseConfig);
+
+// Export the authentication instance to be used in other parts of the application
 export const auth = getAuth(app);

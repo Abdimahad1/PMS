@@ -15,15 +15,19 @@ const SignUp = () => {
     const navigate = useNavigate();
 
     const handleSignUp = () => {
+        // Check if all fields are filled
         if (!firstName || !lastName || !email || !password || !confirmPassword) {
             toast.error('Please fill out all fields!');
             return;
         }
 
+        // Check if passwords match
         if (password === confirmPassword) {
+            // Create a new user with email and password
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
+                    // Update the user's profile with the display name
                     updateProfile(user, {
                         displayName: `${firstName} ${lastName}`
                     }).then(() => {

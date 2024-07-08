@@ -1,5 +1,3 @@
-// src/Components/TeamMembers.js
-
 import React, { useContext } from 'react';
 import p1 from '../images/p1.jpeg';
 import p2 from '../images/p2.jpeg';
@@ -7,8 +5,9 @@ import p3 from '../images/p3.jpeg';
 import { ThemeContext } from '../Context/ThemeContext';
 
 const TeamMembers = () => {
-  const { theme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext); // Access theme context
 
+  // Array of team members with their details
   const teamMembers = [
     {
       name: 'Abdimahad',

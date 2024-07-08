@@ -8,6 +8,7 @@ const Sidebar = ({ user, onSettingsClick, onProjectsClick, onLogout }) => {
     const [collapsed, setCollapsed] = useState(false);
     const { theme } = useContext(ThemeContext);
 
+    // Handle logout click with confirmation toast
     const handleLogoutClick = () => {
         const toastId = toast.info(
             <div>
@@ -15,8 +16,8 @@ const Sidebar = ({ user, onSettingsClick, onProjectsClick, onLogout }) => {
                 <button
                     className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
                     onClick={() => {
-                        onLogout();
-                        toast.dismiss(toastId);
+                        onLogout(); // Perform logout action
+                        toast.dismiss(toastId); // Dismiss the toast
                     }}
                 >
                     Confirm
@@ -35,25 +36,30 @@ const Sidebar = ({ user, onSettingsClick, onProjectsClick, onLogout }) => {
 
     return (
         <div className={`h-screen flex flex-col ${collapsed ? 'w-20' : 'w-64'} ${theme.sidebar} transition-all duration-300 fixed md:relative`}>
+            {/* Sidebar header with collapse button */}
             <div className={`p-4 flex justify-between items-center border-b ${theme.borderColor}`}>
                 <span className="text-xl font-semibold">{!collapsed && 'PM-SYSTEM'}</span>
                 <button onClick={() => setCollapsed(!collapsed)} className="focus:outline-none">
                     <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                         {collapsed ? (
-                            <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.59 5.58L20 12l-8-8z"/>
+                            <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.59 5.58L20 12l-8-8z" />
                         ) : (
-                            <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.59-5.58L4 12l8 8z"/>
+                            <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.59-5.58L4 12l8 8z" />
                         )}
                     </svg>
                 </button>
             </div>
+            {/* User information */}
             <div className={`mt-4 flex items-center p-2 border-b ${theme.borderColor}`}>
                 <FaUserCircle className="h-10 w-10 mr-2" />
-                {!collapsed && <div>
-                    <p className="text-lg font-semibold">{user.displayName}</p>
-                    <p className="text-sm">{user.email}</p>
-                </div>}
+                {!collapsed && (
+                    <div>
+                        <p className="text-lg font-semibold">{user.displayName}</p>
+                        <p className="text-sm">{user.email}</p>
+                    </div>
+                )}
             </div>
+            {/* Menu items */}
             <div className="mt-4 flex-1">
                 {menuItems.map((item, index) => (
                     <div key={index}>
@@ -66,6 +72,7 @@ const Sidebar = ({ user, onSettingsClick, onProjectsClick, onLogout }) => {
                         )}
                     </div>
                 ))}
+                {/* Projects and Settings buttons */}
                 <div className={`flex items-center p-2 hover:${theme.hoverBgColor} cursor-pointer`} onClick={(e) => { e.stopPropagation(); onProjectsClick(); }}>
                     <FaProjectDiagram className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
                     {!collapsed && <span>Projects</span>}
@@ -75,6 +82,7 @@ const Sidebar = ({ user, onSettingsClick, onProjectsClick, onLogout }) => {
                     {!collapsed && <span>Settings</span>}
                 </div>
             </div>
+            {/* Logout button */}
             <div className={`p-2 border-t ${theme.borderColor}`}>
                 <div className={`flex items-center p-2 hover:${theme.hoverBgColor} cursor-pointer`} onClick={handleLogoutClick}>
                     <FaSignOutAlt className={`h-6 w-6 ${!collapsed && 'mr-4'}`} />
