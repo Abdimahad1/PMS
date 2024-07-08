@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { auth } from '../firebase';
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -19,10 +21,21 @@ const SignUp = () => {
         }
 
         if (password === confirmPassword) {
-            const newUser = { name: `${firstName} ${lastName}`, email, password };
-            localStorage.setItem('user', JSON.stringify(newUser));
-            toast.success('Sign up successful! Please log in.');
-            navigate('/login');
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    updateProfile(user, {
+                        displayName: `${firstName} ${lastName}`
+                    }).then(() => {
+                        toast.success('Sign up successful! Please log in.');
+                        navigate('/login');
+                    }).catch((error) => {
+                        toast.error(error.message);
+                    });
+                })
+                .catch((error) => {
+                    toast.error(error.message);
+                });
         } else {
             toast.error('Passwords do not match!');
         }

@@ -4,30 +4,30 @@ import { FaHome, FaProjectDiagram, FaCog, FaUserCircle, FaSignOutAlt, FaCalendar
 import { ThemeContext } from '../Context/ThemeContext';
 import { toast } from 'react-toastify';
 
-const Sidebar = ({ user, onSettingsClick, onProjectsClick }) => {
+const Sidebar = ({ user, onSettingsClick, onProjectsClick, onLogout }) => {
     const [collapsed, setCollapsed] = useState(false);
     const { theme } = useContext(ThemeContext);
 
     const handleLogoutClick = () => {
-        toast.info(
+        const toastId = toast.info(
             <div>
                 <p>Are you sure you want to log out?</p>
                 <button
                     className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
                     onClick={() => {
-                        sessionStorage.removeItem('loggedInUser');
-                        window.location.href = '/login'; // Redirect to login after logout
-                        toast.dismiss();
+                        onLogout();
+                        toast.dismiss(toastId);
                     }}
                 >
                     Confirm
                 </button>
-            </div>
+            </div>,
+            { autoClose: false }
         );
     };
 
     const menuItems = [
-        { name: 'Home', icon: FaHome, route: '/' },
+        { name: 'Home', icon: FaHome, route: '/home' },
         { name: 'Team Members', icon: FaUserCircle, route: '/team-members' },
         { name: 'Support', icon: FaCog, route: '/support' },
         { name: 'Custom Calendar', icon: FaCalendarAlt, route: '/custom-calendar' },
@@ -50,7 +50,7 @@ const Sidebar = ({ user, onSettingsClick, onProjectsClick }) => {
             <div className={`mt-4 flex items-center p-2 border-b ${theme.borderColor}`}>
                 <FaUserCircle className="h-10 w-10 mr-2" />
                 {!collapsed && <div>
-                    <p className="text-lg font-semibold">{user.name}</p>
+                    <p className="text-lg font-semibold">{user.displayName}</p>
                     <p className="text-sm">{user.email}</p>
                 </div>}
             </div>

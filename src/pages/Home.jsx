@@ -279,7 +279,7 @@ const Home = ({ user }) => {
       <ToastContainer />
             <header className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Hi, {user.name} 👋</h1>
+                    <h1 className="text-2xl font-bold text-white">Hi,Welcome {user.name} 👋</h1>
                     <p className="text-gray-500">{currentDate}</p>
                 </div>
                 <div className="relative">

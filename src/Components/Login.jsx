@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = ({ setUser }) => {
     const [showPassword, setShowPassword] = useState(false);
@@ -14,15 +15,17 @@ const Login = ({ setUser }) => {
             return;
         }
 
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser && storedUser.email === email && storedUser.password === password) {
-            setUser(storedUser);
-            sessionStorage.setItem('loggedInUser', JSON.stringify(storedUser));
-            toast.success('Successfully logged in!');
-            navigate('/');
-        } else {
-            toast.error('Incorrect email or password!');
-        }
+        const auth = getAuth();
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                setUser(user);
+                sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+                navigate('/home');
+            })
+            .catch((error) => {
+                toast.error('Incorrect email or password!');
+            });
     };
 
     return (
