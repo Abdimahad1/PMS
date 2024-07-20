@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { FaHome, FaProjectDiagram, FaCog, FaUserCircle, FaSignOutAlt, FaCalendarAlt } from 'react-icons/fa';
+import { FaHome, FaProjectDiagram, FaCog, FaUserCircle, FaSignOutAlt, FaCalendarAlt, FaLifeRing } from 'react-icons/fa';
 import { ThemeContext } from '../Context/ThemeContext';
 import { toast } from 'react-toastify';
 
@@ -29,7 +29,7 @@ const Sidebar = ({ user, onSettingsClick, onProjectsClick, onLogout }) => {
     const menuItems = [
         { name: 'Home', icon: FaHome, route: '/home' },
         { name: 'Team Members', icon: FaUserCircle, route: '/team-members' },
-        { name: 'Support', icon: FaCog, route: '/support' },
+        { name: 'Support', icon: FaLifeRing, route: '/support' }, // Changed icon here
         { name: 'Custom Calendar', icon: FaCalendarAlt, route: '/custom-calendar' },
     ];
 
